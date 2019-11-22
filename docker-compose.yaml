@@ -23,6 +23,8 @@ services:
       DATABASE_URL: postgres://music_user:music_password@db/Chinook
     volumes:
       - "./music_database:/code/music_database"
+    ports:
+      - 8000:8000
 
 volumes:
   pgdata:

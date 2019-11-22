@@ -10,8 +10,10 @@ setup(
     setup_requires=["setuptools_scm"],
     install_requires=[
         "Django>=2",
-        "psycopg2",
         "dj-database-url",
     ],
+    extras_require={
+        "psycopg": ["psycopg2"],
+    },
     scripts=["manage.py"],
 )
