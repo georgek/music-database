@@ -15,6 +15,15 @@ services:
     ports:
       - 5432:5432
 
+  django:
+    build: .
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://music_user:music_password@db/Chinook
+    volumes:
+      - "./music_database:/code/music_database"
+
 volumes:
   pgdata:
 
