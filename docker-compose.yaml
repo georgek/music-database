@@ -1,0 +1,21 @@
+---
+version: "3.7"
+
+services:
+  db:
+    image: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: Chinook
+      POSTGRES_USER: music_user
+      POSTGRES_PASSWORD: music_password
+    volumes:
+      - ./postgres/docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+volumes:
+  pgdata:
+
+...
