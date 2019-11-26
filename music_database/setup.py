@@ -11,6 +11,9 @@ setup(
     install_requires=[
         "Django>=2",
         "dj-database-url",
+        "djangorestframework",
+        "markdown",
+        "django-filter",
     ],
     extras_require={
         "psycopg": ["psycopg2"],
