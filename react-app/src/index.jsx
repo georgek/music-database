@@ -1,79 +1,25 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
+import React from "react";
+import ReactDOM from "react-dom";
+import Pagination from "react-js-pagination";
+// import "./index.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 
-function Paginator(props) {
-  const numPages = Math.ceil(props.totalRecords / props.recordsPerPage);
-  const currentPage = Math.floor(props.currentOffset / props.recordsPerPage) + 1;
+import Container from "react-bootstrap/Container";
+import Table from "react-bootstrap/Table";
 
-  var buttons = [];
-  buttons.push(
-    <button
-      key="previous"
-      className="button button-outline"
-      onClick={() => props.onPageChange(props.currentOffset-props.recordsPerPage)}
-    >
-      «
-    </button>
-  );
-
-  if (currentPage !== 1) {
-    buttons.push(
-      <button
-        key="first"
-        className="button button-outline"
-        onClick={() => props.onPageChange(0)}
-      >
-        1
-      </button>
-    );
-  }
-
-  buttons.push(
-    <button key={currentPage} className="button">
-      {currentPage}
-    </button>
-  );
-
-  if (currentPage !== numPages) {
-    buttons.push(
-      <button
-        key="last"
-        className="button button-outline"
-        onClick={() => props.onPageChange((numPages-1)*props.recordsPerPage)}
-      >
-        {numPages}
-      </button>
-    );
-  }
-
-  buttons.push(
-    <button
-      key="next"
-      className="button button-outline"
-      onClick={() => props.onPageChange(props.currentOffset+props.recordsPerPage)}
-    >
-      »
-    </button>
-  );
-
-  return (
-    <div className="paginator">
-      {buttons}
-    </div>
-  );
-}
-
-class Table extends React.Component {
+class DataTable extends React.Component {
   constructor(props) {
     super(props);
-    this.recordsPerPage = 15;
+    this.recordsPerPage = 10;
 
     this.state = {
       currentRecords: [],
+      currentPage: 1,
       currentOffset: 0,
       totalRecords: null,
     };
+
+    this.handlePageChange = this.handlePageChange.bind(this);
   }
 
   fetch(limit, offset) {
@@ -91,24 +37,28 @@ class Table extends React.Component {
     this.fetch(this.recordsPerPage, this.state.currentOffset);
   }
 
-  handlePageChange(offset) {
-    console.log(offset);
-    var correctedOffset = Math.max(0, offset);
-    correctedOffset = Math.min(
-      correctedOffset,
-      this.state.totalRecords
-    );
+  handlePageChange(page) {
+    // var correctedOffset = Math.max(0, offset);
+    // correctedOffset = Math.min(
+    //   correctedOffset,
+    //   this.state.totalRecords
+    // );
+    if (page < 1) {
+      return;
+    }
+    const offset = (page - 1) * this.recordsPerPage;
 
-    this.fetch(this.recordsPerPage, correctedOffset)
+    this.fetch(this.recordsPerPage, offset)
       .then(() => this.setState({
-        currentOffset: correctedOffset,
+        currentPage: page,
+        currentOffset: offset,
       }));
   }
 
   render() {
     return (
-      <div>
-        <table>
+      <Container>
+        <Table striped hover>
           <thead>
             <tr>
               <th>#</th>
@@ -130,13 +80,24 @@ class Table extends React.Component {
                 </tr>
             )}
           </tbody>
-        </table>
-        <Paginator currentOffset={this.state.currentOffset}
-                   totalRecords={this.state.totalRecords}
-                   recordsPerPage={this.recordsPerPage}
-                   onPageChange={i => this.handlePageChange(i)}
-        />
-      </div>
+        </Table>
+        <nav aria-label="Table pagination">
+          <Pagination
+            onChange={this.handlePageChange}
+            activePage={this.state.currentPage}
+            itemsCountPerPage={this.recordsPerPage}
+            totalItemsCount={this.state.totalRecords}
+            pageRangeDisplayed="5"
+            innerClass="pagination justify-content-center"
+            itemClass="page-item"
+            linkClass="page-link"
+            activeClass="active"
+            disabledClass="disabled"
+            prevPageText="‹"
+            nextPageText="›"
+          />
+        </nav>
+      </Container>
     );
   }
 }
@@ -165,7 +126,7 @@ function App(props) {
     },
   ];
 
-  return <Table
+  return <DataTable
            schema={schema}
            recordsUrl="http://127.0.0.1:8000/tracks/"
          />;
@@ -173,5 +134,5 @@ function App(props) {
 
 ReactDOM.render(
   <App />,
-  document.getElementById('root')
+  document.getElementById("root")
 );
