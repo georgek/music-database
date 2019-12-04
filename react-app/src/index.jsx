@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import Pagination from "react-js-pagination";
-// import "./index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import Container from "react-bootstrap/Container";
@@ -38,11 +37,6 @@ class DataTable extends React.Component {
   }
 
   handlePageChange(page) {
-    // var correctedOffset = Math.max(0, offset);
-    // correctedOffset = Math.min(
-    //   correctedOffset,
-    //   this.state.totalRecords
-    // );
     if (page < 1) {
       return;
     }
