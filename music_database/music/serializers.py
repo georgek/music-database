@@ -37,3 +37,13 @@ class TrackSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Track
         fields = "__all__"
+
+
+class TrackTableSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Track
+        fields = "__all__"
+
+    album = serializers.StringRelatedField()
+    media_type = serializers.StringRelatedField()
+    genre = serializers.StringRelatedField()

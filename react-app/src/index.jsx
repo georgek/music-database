@@ -71,7 +71,7 @@ class DataTable extends React.Component {
           <tbody>
             {this.state.currentRecords.map(
               (record, index) =>
-                <tr key={record.url}>
+                <tr key={record.id}>
                   <th scope="row">{index+this.state.currentOffset+1}</th>
                   {this.props.schema.map(
                     (item) =>
@@ -105,16 +105,12 @@ class DataTable extends React.Component {
 function App(props) {
   const schema = [
     {
-      key: "url",
-      name: "URL",
+      key: "id",
+      name: "ID",
     },
     {
       key: "name",
       name: "Name",
-    },
-    {
-      key: "composer",
-      name: "Composer",
     },
     {
       key: "album",
@@ -124,11 +120,15 @@ function App(props) {
       key: "milliseconds",
       name: "Length",
     },
+    {
+      key: "genre",
+      name: "Genre",
+    },
   ];
 
   return <DataTable
            schema={schema}
-           recordsUrl="http://127.0.0.1:8000/tracks/"
+           recordsUrl="http://127.0.0.1:8000/tracks-table/"
          />;
 }
 

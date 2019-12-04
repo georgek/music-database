@@ -25,6 +25,7 @@ from music.viewsets.models import (
     GenreViewSet,
     TrackViewSet,
 )
+from music.viewsets.tables import TrackTableViewSet
 
 router = routers.DefaultRouter()
 router.register("artists", ArtistViewSet)
@@ -32,6 +33,7 @@ router.register("albums", AlbumViewSet)
 router.register("mediatype", MediatypeViewSet)
 router.register("genres", GenreViewSet)
 router.register("tracks", TrackViewSet)
+router.register("tracks-table", TrackTableViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
