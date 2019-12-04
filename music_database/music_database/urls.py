@@ -18,7 +18,7 @@ from django.urls import include, path
 
 from rest_framework import routers
 
-from music.viewsets import (
+from music.viewsets.models import (
     ArtistViewSet,
     AlbumViewSet,
     MediatypeViewSet,
