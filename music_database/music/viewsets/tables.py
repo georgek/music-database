@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework import filters
 
 from ..models import Track
 
@@ -12,3 +13,5 @@ class TrackTableViewSet(viewsets.ReadOnlyModelViewSet):
         "genre",
     )
     serializer_class = TrackTableSerializer
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = "__all__"
