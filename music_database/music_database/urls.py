@@ -32,8 +32,8 @@ router.register("artists", ArtistViewSet)
 router.register("albums", AlbumViewSet)
 router.register("mediatype", MediatypeViewSet)
 router.register("genres", GenreViewSet)
-router.register("tracks", TrackViewSet)
-router.register("tracks-table", TrackTableViewSet)
+router.register("tracks", TrackViewSet, basename="track")
+router.register("tracks-table", TrackTableViewSet, basename="tracks-table")
 
 urlpatterns = [
     path("", include(router.urls)),
