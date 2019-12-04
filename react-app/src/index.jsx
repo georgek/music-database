@@ -6,6 +6,27 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Container from "react-bootstrap/Container";
 import Table from "react-bootstrap/Table";
 
+function TableHeaderItem(props) {
+  var label = props.name;
+  var newSortKey = props.sortKey;
+  if (props.sortedAsc) {
+    label += " ▴";
+    newSortKey = "-" + props.sortKey;
+  } else if (props.sortedDesc) {
+    label += " ▾";
+    newSortKey = "";
+  }
+  return (
+    <th scope="col">
+      {props.sortKey ? (
+        <a href="#" onClick={() => props.onClick(newSortKey)}>
+          {label}
+        </a>
+      ) : label}
+    </th>
+  );
+}
+
 class DataTable extends React.Component {
   constructor(props) {
     super(props);
@@ -16,14 +37,19 @@ class DataTable extends React.Component {
       currentPage: 1,
       currentOffset: 0,
       totalRecords: null,
+      sortKey: null,
     };
 
     this.handlePageChange = this.handlePageChange.bind(this);
   }
 
-  fetch(limit, offset) {
+  fetch(limit, offset, sortKey) {
     let url = `${this.props.recordsUrl}?limit=${limit}`
         + `&offset=${offset}`;
+    if (sortKey) {
+      url += `&ordering=${sortKey}`;
+    }
+    console.log(url);
     return fetch(url)
       .then(response => response.json())
       .then(data => this.setState({
@@ -42,10 +68,17 @@ class DataTable extends React.Component {
     }
     const offset = (page - 1) * this.recordsPerPage;
 
-    this.fetch(this.recordsPerPage, offset)
+    this.fetch(this.recordsPerPage, offset, this.state.sortKey)
       .then(() => this.setState({
         currentPage: page,
         currentOffset: offset,
+      }));
+  }
+
+  handleSortChange(sortKey) {
+    this.fetch(this.recordsPerPage, this.state.currentOffset, sortKey)
+      .then(() => this.setState({
+        sortKey: sortKey,
       }));
   }
 
@@ -58,7 +91,14 @@ class DataTable extends React.Component {
               <th>#</th>
               {this.props.schema.map(
                 (item) =>
-                  <th key={item.key} scope="col">{item.name}</th>
+                  <TableHeaderItem
+                    key={item.sortKey}
+                    name={item.name}
+                    sortKey={item.sortKey}
+                    sortedAsc={this.state.sortKey === item.sortKey}
+                    sortedDesc={this.state.sortKey === "-" + item.sortKey}
+                    onClick={(sortKey) => this.handleSortChange(sortKey)}
+                  />
               )}
             </tr>
           </thead>
@@ -101,22 +141,27 @@ function App(props) {
     {
       key: "id",
       name: "ID",
+      sortKey: "id",
     },
     {
       key: "name",
       name: "Name",
+      sortKey: "name",
     },
     {
       key: "album",
       name: "Album",
+      sortKey: "album__title",
     },
     {
       key: "milliseconds",
       name: "Length",
+      sortKey: "milliseconds",
     },
     {
       key: "genre",
       name: "Genre",
+      sortKey: null,
     },
   ];
 

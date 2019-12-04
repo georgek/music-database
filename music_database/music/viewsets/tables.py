@@ -14,4 +14,9 @@ class TrackTableViewSet(viewsets.ReadOnlyModelViewSet):
     )
     serializer_class = TrackTableSerializer
     filter_backends = [filters.OrderingFilter]
-    ordering_fields = "__all__"
+    ordering_fields = [
+        "id",
+        "name",
+        "album__title",
+        "milliseconds",
+    ]
