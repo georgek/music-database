@@ -6,6 +6,14 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Container from "react-bootstrap/Container";
 import Table from "react-bootstrap/Table";
 
+function displayLength(milliseconds) {
+  milliseconds = parseInt(milliseconds, 10);
+  const totalSeconds = milliseconds / 1000;
+  const minutes = Math.floor(totalSeconds / 60).toString();
+  const seconds = Math.ceil(totalSeconds % 60).toString().padStart(2, "0");
+  return `${minutes}:${seconds}`;
+}
+
 function TableHeaderItem(props) {
   var label = props.name;
   var newSortKey = props.sortKey;
@@ -109,7 +117,11 @@ class DataTable extends React.Component {
                   <th scope="row">{index+this.state.currentOffset+1}</th>
                   {this.props.schema.map(
                     (item) =>
-                      <td key={item.key}>{record[item.key]}</td>
+                      <td key={item.key}>
+                        {item.render ?
+                         item.render(record[item.key]) :
+                         record[item.key]}
+                      </td>
                   )}
                 </tr>
             )}
@@ -162,6 +174,7 @@ function App(props) {
       key: "milliseconds",
       name: "Length",
       sortKey: "milliseconds",
+      render: displayLength,
     },
     {
       key: "genre",
