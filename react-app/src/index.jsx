@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import Pagination from "react-js-pagination";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./index.css";
 
 import Container from "react-bootstrap/Container";
 import Table from "react-bootstrap/Table";
@@ -27,9 +28,12 @@ function TableHeaderItem(props) {
   return (
     <th scope="col">
       {props.sortKey ? (
-        <a href="#" onClick={(e) => props.onClick(e, newSortKey)}>
+        <button
+          className="btn btn-link thead" href="#"
+          onClick={(e) => props.onClick(e, newSortKey)}
+        >
           {label}
-        </a>
+        </button>
       ) : label}
     </th>
   );
