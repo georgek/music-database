@@ -49,7 +49,7 @@ class DataTable extends React.Component {
       currentPage: 1,
       currentOffset: 0,
       totalRecords: null,
-      sortKey: null,
+      sortKey: "",
     };
 
     this.handlePageChange = this.handlePageChange.bind(this);
