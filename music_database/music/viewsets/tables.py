@@ -13,10 +13,16 @@ class TrackTableViewSet(viewsets.ReadOnlyModelViewSet):
         "genre",
     )
     serializer_class = TrackTableSerializer
-    filter_backends = [filters.OrderingFilter]
+    filter_backends = [
+        filters.OrderingFilter,
+        filters.SearchFilter,
+    ]
     ordering_fields = [
         "id",
         "name",
         "album__title",
         "milliseconds",
+    ]
+    search_fields = [
+        "name",
     ]
