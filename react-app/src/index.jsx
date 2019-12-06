@@ -27,7 +27,7 @@ function TableHeaderItem(props) {
   return (
     <th scope="col">
       {props.sortKey ? (
-        <a href="#" onClick={() => props.onClick(newSortKey)}>
+        <a href="#" onClick={(e) => props.onClick(e, newSortKey)}>
           {label}
         </a>
       ) : label}
@@ -49,6 +49,7 @@ class DataTable extends React.Component {
     };
 
     this.handlePageChange = this.handlePageChange.bind(this);
+    this.handleSortChange = this.handleSortChange.bind(this);
   }
 
   fetch(limit, offset, sortKey) {
@@ -83,7 +84,8 @@ class DataTable extends React.Component {
       }));
   }
 
-  handleSortChange(sortKey) {
+  handleSortChange(e, sortKey) {
+    e.preventDefault();
     this.fetch(this.recordsPerPage, this.state.currentOffset, sortKey)
       .then(() => this.setState({
         sortKey: sortKey,
@@ -105,7 +107,7 @@ class DataTable extends React.Component {
                     sortKey={item.sortKey}
                     sortedAsc={this.state.sortKey === item.sortKey}
                     sortedDesc={this.state.sortKey === "-" + item.sortKey}
-                    onClick={(sortKey) => this.handleSortChange(sortKey)}
+                    onClick={this.handleSortChange}
                   />
               )}
             </tr>
