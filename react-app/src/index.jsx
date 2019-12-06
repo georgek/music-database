@@ -7,6 +7,13 @@ import "./index.css";
 import Container from "react-bootstrap/Container";
 import Table from "react-bootstrap/Table";
 
+function buildQuery(object) {
+  const items = Object.keys(object).map((key) =>
+    `${key}=${object[key]}`
+  );
+  return items.join("&");
+}
+
 function displayLength(milliseconds) {
   milliseconds = parseInt(milliseconds, 10);
   const totalSeconds = milliseconds / 1000;
@@ -57,11 +64,12 @@ class DataTable extends React.Component {
   }
 
   fetch(limit, offset, sortKey) {
-    let url = `${this.props.recordsUrl}?limit=${limit}`
-        + `&offset=${offset}`;
-    if (sortKey) {
-      url += `&ordering=${sortKey}`;
-    }
+    const query = buildQuery({
+      limit: limit,
+      offset: offset,
+      ordering: sortKey,
+    });
+    const url = `${this.props.recordsUrl}?${query}`;
     console.log(url);
     return fetch(url)
       .then(response => response.json())
@@ -72,7 +80,7 @@ class DataTable extends React.Component {
   }
 
   componentDidMount() {
-    this.fetch(this.recordsPerPage, this.state.currentOffset);
+    this.fetch(this.recordsPerPage, this.state.currentOffset, "");
   }
 
   handlePageChange(page) {
