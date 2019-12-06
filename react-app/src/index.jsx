@@ -4,7 +4,12 @@ import Pagination from "react-js-pagination";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
 
+import Button from "react-bootstrap/Button";
+import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
+import InputGroup from "react-bootstrap/InputGroup";
+import FormControl from "react-bootstrap/FormControl";
+import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
 
 function buildQuery(object) {
@@ -20,6 +25,22 @@ function displayLength(milliseconds) {
   const minutes = Math.floor(totalSeconds / 60).toString();
   const seconds = Math.ceil(totalSeconds % 60).toString().padStart(2, "0");
   return `${minutes}:${seconds}`;
+}
+
+function SearchBox(props) {
+  return (
+    <InputGroup className="mb-3">
+      <FormControl
+        onChange={props.onChange}
+        placeholder="Search"
+        aria-label="Search"
+        aria-describedby="basic-addon2"
+      />
+      <InputGroup.Append>
+        <Button variant="outline-secondary">Search</Button>
+      </InputGroup.Append>
+    </InputGroup>
+  );
 }
 
 function TableHeaderItem(props) {
@@ -57,17 +78,20 @@ class DataTable extends React.Component {
       currentOffset: 0,
       totalRecords: null,
       sortKey: "",
+      searchString: "",
     };
 
     this.handlePageChange = this.handlePageChange.bind(this);
     this.handleSortChange = this.handleSortChange.bind(this);
+    this.handleSearchStringChange = this.handleSearchStringChange.bind(this);
   }
 
-  fetch(limit, offset, sortKey) {
+  fetch(limit, offset, sortKey, searchString) {
     const query = buildQuery({
       limit: limit,
       offset: offset,
       ordering: sortKey,
+      search: searchString,
     });
     const url = `${this.props.recordsUrl}?${query}`;
     console.log(url);
@@ -80,7 +104,12 @@ class DataTable extends React.Component {
   }
 
   componentDidMount() {
-    this.fetch(this.recordsPerPage, this.state.currentOffset, "");
+    this.fetch(
+      this.recordsPerPage,
+      this.state.currentOffset,
+      this.state.sortKey,
+      this.state.searchString,
+    );
   }
 
   handlePageChange(page) {
@@ -89,74 +118,107 @@ class DataTable extends React.Component {
     }
     const offset = (page - 1) * this.recordsPerPage;
 
-    this.fetch(this.recordsPerPage, offset, this.state.sortKey)
-      .then(() => this.setState({
-        currentPage: page,
-        currentOffset: offset,
-      }));
+    this.fetch(
+      this.recordsPerPage,
+      offset,
+      this.state.sortKey,
+      this.state.searchString,
+    ).then(() => this.setState({
+      currentPage: page,
+      currentOffset: offset,
+    }));
   }
 
   handleSortChange(e, sortKey) {
     e.preventDefault();
-    this.fetch(this.recordsPerPage, this.state.currentOffset, sortKey)
-      .then(() => this.setState({
-        sortKey: sortKey,
-      }));
+    this.fetch(
+      this.recordsPerPage,
+      this.state.currentOffset,
+      sortKey,
+      this.state.searchString,
+    ).then(() => this.setState({
+      sortKey: sortKey,
+    }));
+  }
+
+  handleSearchStringChange(e) {
+    const searchString = e.target.value;
+    this.fetch(
+      this.recordsPerPage,
+      this.state.currentOffset,
+      this.state.sortKey,
+      searchString,
+    ).then(() => this.setState({
+      searchString: searchString,
+    }));
   }
 
   render() {
     return (
       <Container>
-        <Table striped hover>
-          <thead>
-            <tr>
-              <th>#</th>
-              {this.props.schema.map(
-                (item) =>
-                  <TableHeaderItem
-                    key={item.sortKey}
-                    name={item.name}
-                    sortKey={item.sortKey}
-                    sortedAsc={this.state.sortKey === item.sortKey}
-                    sortedDesc={this.state.sortKey === "-" + item.sortKey}
-                    onClick={this.handleSortChange}
-                  />
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {this.state.currentRecords.map(
-              (record, index) =>
-                <tr key={record.id}>
-                  <th scope="row">{index+this.state.currentOffset+1}</th>
+        <Row>
+          <Col>
+            <SearchBox onChange={this.handleSearchStringChange} />
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Table striped hover>
+              <thead>
+                <tr>
+                  <th>#</th>
                   {this.props.schema.map(
                     (item) =>
-                      <td key={item.key}>
-                        {item.render ?
-                         item.render(record[item.key]) :
-                         record[item.key]}
-                      </td>
+                      <TableHeaderItem
+                        key={item.sortKey}
+                        name={item.name}
+                        sortKey={item.sortKey}
+                        sortedAsc={this.state.sortKey === item.sortKey}
+                        sortedDesc={this.state.sortKey === "-" + item.sortKey}
+                        onClick={this.handleSortChange}
+                      />
                   )}
                 </tr>
-            )}
-          </tbody>
-        </Table>
-        <nav aria-label="Table pagination">
-          <Pagination
-            onChange={this.handlePageChange}
-            activePage={this.state.currentPage}
-            itemsCountPerPage={this.recordsPerPage}
-            totalItemsCount={this.state.totalRecords}
-            pageRangeDisplayed="5"
-            innerClass="pagination justify-content-center"
-            itemClass="page-item"
-            linkClass="page-link"
-            activeClass="active"
-            disabledClass="disabled"
-            prevPageText="‹"
-            nextPageText="›"
-          />
-        </nav>
+              </thead>
+              <tbody>
+                {this.state.currentRecords.map(
+                  (record, index) =>
+                    <tr key={record.id}>
+                      <th scope="row">{index+this.state.currentOffset+1}</th>
+                      {this.props.schema.map(
+                        (item) =>
+                          <td key={item.key}>
+                            {item.render ?
+                             item.render(record[item.key]) :
+                             record[item.key]}
+                          </td>
+                      )}
+                    </tr>
+                )}
+              </tbody>
+            </Table>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <nav aria-label="Table pagination">
+              <Pagination
+                onChange={this.handlePageChange}
+                activePage={this.state.currentPage}
+                itemsCountPerPage={this.recordsPerPage}
+                totalItemsCount={this.state.totalRecords}
+                pageRangeDisplayed="5"
+                innerClass="pagination justify-content-center"
+                itemClass="page-item"
+                linkClass="page-link"
+                activeClass="active"
+                disabledClass="disabled"
+                prevPageText="‹"
+                nextPageText="›"
+              />
+            </nav>
+          </Col>
+        </Row>
       </Container>
     );
   }
