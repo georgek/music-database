@@ -154,6 +154,11 @@ function App(props) {
       sortKey: "album__title",
     },
     {
+      key: "artist",
+      name: "Artist",
+      sortKey: "album__artist__name",
+    },
+    {
       key: "milliseconds",
       name: "Length",
       sortKey: "milliseconds",

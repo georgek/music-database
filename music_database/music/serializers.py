@@ -42,8 +42,21 @@ class TrackSerializer(serializers.HyperlinkedModelSerializer):
 class TrackTableSerializer(serializers.ModelSerializer):
     class Meta:
         model = Track
-        fields = "__all__"
+        fields = [
+            "id",
+            "name",
+            "artist",
+            "album",
+            "genre",
+            "milliseconds",
+            "bytes",
+            "unitprice",
+            "media_type",
+        ]
 
     album = serializers.StringRelatedField()
+    artist = serializers.StringRelatedField(
+        source="album.artist",
+    )
     media_type = serializers.StringRelatedField()
     genre = serializers.StringRelatedField()

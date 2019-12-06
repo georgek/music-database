@@ -9,6 +9,7 @@ from ..serializers import TrackTableSerializer
 class TrackTableViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Track.objects.select_related(
         "album",
+        "album__artist",
         "media_type",
         "genre",
     )
@@ -21,6 +22,7 @@ class TrackTableViewSet(viewsets.ReadOnlyModelViewSet):
         "id",
         "name",
         "album__title",
+        "album__artist__name",
         "milliseconds",
     ]
     search_fields = [
