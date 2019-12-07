@@ -32,17 +32,20 @@ function displayLength(milliseconds) {
 
 function SearchBox(props) {
   return (
-    <InputGroup className="mb-3">
-      <FormControl
-        onChange={props.onChange}
-        placeholder="Search all fields"
-        aria-label="Search"
-        aria-describedby="basic-addon2"
-      />
-      <InputGroup.Append>
-        <Button variant="outline-secondary">Search</Button>
-      </InputGroup.Append>
-    </InputGroup>
+    <Form.Group>
+      <Form.Label>Fuzzy search</Form.Label>
+      <InputGroup className="mb-3">
+        <FormControl
+          onChange={props.onChange}
+          placeholder="Search all fields"
+          aria-label="Search"
+          aria-describedby="basic-addon2"
+        />
+        <InputGroup.Append>
+          <Button variant="outline-secondary">Search</Button>
+        </InputGroup.Append>
+      </InputGroup>
+    </Form.Group>
   );
 }
 
