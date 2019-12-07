@@ -198,12 +198,14 @@ class DataTable extends React.Component {
     e.preventDefault();
     this.fetch(
       this.recordsPerPage,
-      this.state.currentOffset,
+      0,
       sortKey,
       this.state.searchString,
       this.state.filters,
     ).then(() => this.setState({
       sortKey: sortKey,
+      currentPage: 1,
+      currentOffset: 0,
     }));
   }
 
@@ -211,24 +213,28 @@ class DataTable extends React.Component {
     const searchString = e.target.value;
     this.fetch(
       this.recordsPerPage,
-      this.state.currentOffset,
+      0,
       this.state.sortKey,
       searchString,
       this.state.filters,
     ).then(() => this.setState({
       searchString: searchString,
+      currentPage: 1,
+      currentOffset: 0,
     }));
   }
 
   handleFiltersChange(filters) {
     this.fetch(
       this.recordsPerPage,
-      this.state.currentOffset,
+      0,
       this.state.sortKey,
       this.state.searchString,
       filters,
     ).then(() => this.setState({
       filters: filters,
+      currentPage: 1,
+      currentOffset: 0,
     }));
   }
 
