@@ -85,18 +85,25 @@ class FilterSet extends React.Component {
     return (
       <Card body>
         <Card.Title>Filters</Card.Title>
-        {this.props.schema.map(
-          (field) => field.filterKey &&
-            <Form.Group key={field.filterKey}>
-              <Form.Label>{field.name}</Form.Label>
-              <Form.Control
-                name={field.filterKey}
-                placeholder={`Filter on ${field.name}`}
-                onChange={this.handleFiltersChange}
-              />
-            </Form.Group>
-        )}
-        <SearchBox onChange={this.props.onSearchStringChange} />
+        <Form>
+          {this.props.schema.map(
+            (field) => field.filterKey &&
+              <Form.Group key={field.filterKey}>
+                <Form.Label>{field.name}</Form.Label>
+                <InputGroup>
+                  <Form.Control
+                    name={field.filterKey}
+                    placeholder={`Filter on ${field.name}`}
+                    onChange={this.handleFiltersChange}
+                  />
+                  <InputGroup.Append>
+                    <Button variant="outline-secondary">Clear</Button>
+                  </InputGroup.Append>
+                </InputGroup>
+              </Form.Group>
+          )}
+          <SearchBox onChange={this.props.onSearchStringChange} />
+        </Form>
       </Card>
     );
   }
