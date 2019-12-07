@@ -175,7 +175,11 @@ class DataTable extends React.Component {
       state.sortKey,
       state.searchString,
       state.filters,
-    ).then(() => this.setState(updatedState));
+    ).then(
+      () => this.setState(updatedState)
+    ).then(
+      () => this.handlePageChange(this.state.currentPage)
+    );
   }
 
   componentDidMount() {
@@ -189,9 +193,19 @@ class DataTable extends React.Component {
   }
 
   handlePageChange(page) {
+    const totalPages = Math.ceil(
+      this.state.totalRecords / this.recordsPerPage
+    );
     if (page < 1) {
+      page = 1;
+    } else if (page > totalPages) {
+      page = totalPages;
+    }
+
+    if (page === this.state.currentPage) {
       return;
     }
+
     const offset = (page - 1) * this.recordsPerPage;
 
     this.updateState({
@@ -204,8 +218,6 @@ class DataTable extends React.Component {
     e.preventDefault();
     this.updateState({
       sortKey: sortKey,
-      currentPage: 1,
-      currentOffset: 0,
     });
   }
 
@@ -213,16 +225,12 @@ class DataTable extends React.Component {
     const searchString = e.target.value;
     this.updateState({
       searchString: searchString,
-      currentPage: 1,
-      currentOffset: 0,
     });
   }
 
   handleFiltersChange(filters) {
     this.updateState({
       filters: filters,
-      currentPage: 1,
-      currentOffset: 0,
     });
   }
 
