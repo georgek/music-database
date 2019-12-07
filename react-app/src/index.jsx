@@ -166,6 +166,18 @@ class DataTable extends React.Component {
       }));
   }
 
+  updateState(updatedState) {
+    let state = Object.assign({}, this.state);
+    state = Object.assign(state, updatedState);
+    this.fetch(
+      this.recordsPerPage,
+      state.currentOffset,
+      state.sortKey,
+      state.searchString,
+      state.filters,
+    ).then(() => this.setState(updatedState));
+  }
+
   componentDidMount() {
     this.fetch(
       this.recordsPerPage,
@@ -182,60 +194,36 @@ class DataTable extends React.Component {
     }
     const offset = (page - 1) * this.recordsPerPage;
 
-    this.fetch(
-      this.recordsPerPage,
-      offset,
-      this.state.sortKey,
-      this.state.searchString,
-      this.state.filters,
-    ).then(() => this.setState({
+    this.updateState({
       currentPage: page,
       currentOffset: offset,
-    }));
+    });
   }
 
   handleSortChange(e, sortKey) {
     e.preventDefault();
-    this.fetch(
-      this.recordsPerPage,
-      0,
-      sortKey,
-      this.state.searchString,
-      this.state.filters,
-    ).then(() => this.setState({
+    this.updateState({
       sortKey: sortKey,
       currentPage: 1,
       currentOffset: 0,
-    }));
+    });
   }
 
   handleSearchStringChange(e) {
     const searchString = e.target.value;
-    this.fetch(
-      this.recordsPerPage,
-      0,
-      this.state.sortKey,
-      searchString,
-      this.state.filters,
-    ).then(() => this.setState({
+    this.updateState({
       searchString: searchString,
       currentPage: 1,
       currentOffset: 0,
-    }));
+    });
   }
 
   handleFiltersChange(filters) {
-    this.fetch(
-      this.recordsPerPage,
-      0,
-      this.state.sortKey,
-      this.state.searchString,
-      filters,
-    ).then(() => this.setState({
+    this.updateState({
       filters: filters,
       currentPage: 1,
       currentOffset: 0,
-    }));
+    });
   }
 
   render() {
