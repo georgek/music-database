@@ -1,6 +1,8 @@
 from rest_framework import viewsets
 from rest_framework import filters
 
+import django_filters
+
 from ..models import Track
 
 from ..serializers import TrackTableSerializer
@@ -17,6 +19,7 @@ class TrackTableViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [
         filters.OrderingFilter,
         filters.SearchFilter,
+        django_filters.rest_framework.DjangoFilterBackend,
     ]
     ordering_fields = [
         "id",
@@ -27,4 +30,9 @@ class TrackTableViewSet(viewsets.ReadOnlyModelViewSet):
     ]
     search_fields = [
         "name",
+    ]
+    filterset_fields = [
+        "name",
+        "album__title",
+        "album__artist__name",
     ]
