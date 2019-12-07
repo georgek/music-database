@@ -5,16 +5,19 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
 
 import Button from "react-bootstrap/Button";
+import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import InputGroup from "react-bootstrap/InputGroup";
+import Form from "react-bootstrap/Form";
 import FormControl from "react-bootstrap/FormControl";
 import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
 
 function buildQuery(object) {
-  const items = Object.keys(object).map((key) =>
-    `${key}=${object[key]}`
+  const items = Object.keys(object).map(
+    (key) =>
+      `${key}=${object[key]}`
   );
   return items.join("&");
 }
@@ -32,7 +35,7 @@ function SearchBox(props) {
     <InputGroup className="mb-3">
       <FormControl
         onChange={props.onChange}
-        placeholder="Search"
+        placeholder="Search all fields"
         aria-label="Search"
         aria-describedby="basic-addon2"
       />
@@ -41,6 +44,59 @@ function SearchBox(props) {
       </InputGroup.Append>
     </InputGroup>
   );
+}
+
+class FilterSet extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.filterKeys = props.schema.filter(
+      (field) => field.filterKey
+    ).map(
+      (field) => field.filterKey
+    );
+    const filterEntries = this.filterKeys.map(
+      (key) => [key, ""]
+    );
+
+    this.state = {
+      filters: Object.fromEntries(filterEntries),
+    };
+    this.handleFiltersChange = this.handleFiltersChange.bind(this);
+  }
+
+  handleFiltersChange(e) {
+    const filterKey = e.target.name;
+    const filterValue = e.target.value;
+    const filters = Object.assign({}, this.state.filters);
+
+    filters[filterKey] = filterValue;
+
+    this.setState({
+      filters: filters,
+    });
+    this.props.onFiltersChange(filters);
+  }
+
+  render() {
+    return (
+      <Card body>
+        <Card.Title>Filters</Card.Title>
+        {this.props.schema.map(
+          (field) => field.filterKey &&
+            <Form.Group key={field.filterKey}>
+              <Form.Label>{field.name}</Form.Label>
+              <Form.Control
+                name={field.filterKey}
+                placeholder={`Filter on ${field.name}`}
+                onChange={this.handleFiltersChange}
+              />
+            </Form.Group>
+        )}
+        <SearchBox onChange={this.props.onSearchStringChange} />
+      </Card>
+    );
+  }
 }
 
 function TableHeaderItem(props) {
@@ -79,21 +135,25 @@ class DataTable extends React.Component {
       totalRecords: null,
       sortKey: "",
       searchString: "",
+      filters: {},
     };
 
     this.handlePageChange = this.handlePageChange.bind(this);
     this.handleSortChange = this.handleSortChange.bind(this);
     this.handleSearchStringChange = this.handleSearchStringChange.bind(this);
+    this.handleFiltersChange = this.handleFiltersChange.bind(this);
   }
 
-  fetch(limit, offset, sortKey, searchString) {
-    const query = buildQuery({
+  fetch(limit, offset, sortKey, searchString, filters) {
+    let query = {
       limit: limit,
       offset: offset,
       ordering: sortKey,
       search: searchString,
-    });
-    const url = `${this.props.recordsUrl}?${query}`;
+    };
+    query = Object.assign(query, filters);
+    const queryString = buildQuery(query);
+    const url = `${this.props.recordsUrl}?${queryString}`;
     console.log(url);
     return fetch(url)
       .then(response => response.json())
@@ -109,6 +169,7 @@ class DataTable extends React.Component {
       this.state.currentOffset,
       this.state.sortKey,
       this.state.searchString,
+      this.state.filters,
     );
   }
 
@@ -123,6 +184,7 @@ class DataTable extends React.Component {
       offset,
       this.state.sortKey,
       this.state.searchString,
+      this.state.filters,
     ).then(() => this.setState({
       currentPage: page,
       currentOffset: offset,
@@ -136,6 +198,7 @@ class DataTable extends React.Component {
       this.state.currentOffset,
       sortKey,
       this.state.searchString,
+      this.state.filters,
     ).then(() => this.setState({
       sortKey: sortKey,
     }));
@@ -148,8 +211,21 @@ class DataTable extends React.Component {
       this.state.currentOffset,
       this.state.sortKey,
       searchString,
+      this.state.filters,
     ).then(() => this.setState({
       searchString: searchString,
+    }));
+  }
+
+  handleFiltersChange(filters) {
+    this.fetch(
+      this.recordsPerPage,
+      this.state.currentOffset,
+      this.state.sortKey,
+      this.state.searchString,
+      filters,
+    ).then(() => this.setState({
+      filters: filters,
     }));
   }
 
@@ -158,7 +234,11 @@ class DataTable extends React.Component {
       <Container>
         <Row>
           <Col>
-            <SearchBox onChange={this.handleSearchStringChange} />
+            <FilterSet
+              schema={this.props.schema}
+              onFiltersChange={this.handleFiltersChange}
+              onSearchStringChange={this.handleSearchStringChange}
+            />
           </Col>
         </Row>
         <Row>
@@ -230,32 +310,38 @@ function App(props) {
       key: "id",
       name: "ID",
       sortKey: "id",
+      filterKey: null,
     },
     {
       key: "name",
       name: "Name",
       sortKey: "name",
+      filterKey: "name",
     },
     {
       key: "album",
       name: "Album",
       sortKey: "album__title",
+      filterKey: "album__title",
     },
     {
       key: "artist",
       name: "Artist",
       sortKey: "album__artist__name",
+      filterKey: "album__artist__name",
     },
     {
       key: "milliseconds",
       name: "Length",
       sortKey: "milliseconds",
+      filterKey: null,
       render: displayLength,
     },
     {
       key: "genre",
       name: "Genre",
       sortKey: null,
+      filterKey: null,
     },
   ];
 
