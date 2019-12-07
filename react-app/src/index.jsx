@@ -33,16 +33,17 @@ function displayLength(milliseconds) {
 function SearchBox(props) {
   return (
     <Form.Group>
-      <Form.Label>Fuzzy search</Form.Label>
+      <Form.Label>{props.label}</Form.Label>
       <InputGroup className="mb-3">
         <FormControl
+          name={props.name}
           onChange={props.onChange}
-          placeholder="Search all fields"
-          aria-label="Search"
+          placeholder={props.placeholder}
+          aria-label={props.label}
           aria-describedby="basic-addon2"
         />
         <InputGroup.Append>
-          <Button variant="outline-secondary">Search</Button>
+          <Button variant="outline-secondary">Clear</Button>
         </InputGroup.Append>
       </InputGroup>
     </Form.Group>
@@ -88,21 +89,19 @@ class FilterSet extends React.Component {
         <Form>
           {this.props.schema.map(
             (field) => field.filterKey &&
-              <Form.Group key={field.filterKey}>
-                <Form.Label>{field.name}</Form.Label>
-                <InputGroup>
-                  <Form.Control
-                    name={field.filterKey}
-                    placeholder={`Filter on ${field.name}`}
-                    onChange={this.handleFiltersChange}
-                  />
-                  <InputGroup.Append>
-                    <Button variant="outline-secondary">Clear</Button>
-                  </InputGroup.Append>
-                </InputGroup>
-              </Form.Group>
+              <SearchBox
+                key={field.filterKey}
+                name={field.filterKey}
+                label={field.name}
+                placeholder={`Filter on ${field.name}`}
+                onChange={this.handleFiltersChange}
+              />
           )}
-          <SearchBox onChange={this.props.onSearchStringChange} />
+          <SearchBox
+            label="Fuzzy search"
+            placeholder="Search all fields"
+            onChange={this.props.onSearchStringChange}
+          />
         </Form>
       </Card>
     );
@@ -203,7 +202,9 @@ class DataTable extends React.Component {
     const totalPages = Math.ceil(
       this.state.totalRecords / this.recordsPerPage
     );
-    if (page < 1) {
+    if (totalPages === 0) {
+      page = 1;
+    } else if (page < 1) {
       page = 1;
     } else if (page > totalPages) {
       page = totalPages;
