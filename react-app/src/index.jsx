@@ -135,7 +135,7 @@ class DataTable extends React.Component {
       currentRecords: [],
       currentPage: 1,
       currentOffset: 0,
-      totalRecords: null,
+      totalRecords: 0,
       sortKey: "",
       searchString: "",
       filters: {},
