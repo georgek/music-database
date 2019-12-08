@@ -43,14 +43,15 @@ function SearchBox(props) {
           aria-label={props.label}
           aria-describedby="basic-addon2"
         />
-        <InputGroup.Append>
-          <Button
-            variant="outline-secondary"
-            onClick={() => props.onChange("")}
-          >
-            Clear
-          </Button>
-        </InputGroup.Append>
+        {props.value &&
+          <InputGroup.Append>
+            <Button
+              variant="outline-secondary"
+              onClick={() => props.onChange("")}
+            >
+              Clear
+            </Button>
+          </InputGroup.Append>}
       </InputGroup>
     </Form.Group>
   );
@@ -71,8 +72,10 @@ class FilterSet extends React.Component {
 
     this.state = {
       filters: Object.fromEntries(filterEntries),
+      searchString: "",
     };
     this.handleFiltersChange = this.handleFiltersChange.bind(this);
+    this.handleSearchStringChange = this.handleSearchStringChange.bind(this);
   }
 
   handleFiltersChange(key, value) {
@@ -84,6 +87,13 @@ class FilterSet extends React.Component {
       filters: filters,
     });
     this.props.onFiltersChange(filters);
+  }
+
+  handleSearchStringChange(value) {
+    this.setState({
+      searchString: value,
+    });
+    this.props.onSearchStringChange(value);
   }
 
   render() {
@@ -105,9 +115,11 @@ class FilterSet extends React.Component {
               />
           )}
           <SearchBox
+            name="search"
             label="Fuzzy search"
+            value={this.state.searchString}
             placeholder="Search all fields"
-            onChange={this.props.onSearchStringChange}
+            onChange={this.handleSearchStringChange}
           />
         </Form>
       </Card>
@@ -236,10 +248,9 @@ class DataTable extends React.Component {
     });
   }
 
-  handleSearchStringChange(e) {
-    const searchString = e.target.value;
+  handleSearchStringChange(string) {
     this.updateState({
-      searchString: searchString,
+      searchString: string,
     });
   }
 
