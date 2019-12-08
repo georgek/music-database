@@ -37,13 +37,19 @@ function SearchBox(props) {
       <InputGroup className="mb-3">
         <FormControl
           name={props.name}
-          onChange={props.onChange}
+          value={props.value}
+          onChange={(e) => props.onChange(e.target.value)}
           placeholder={props.placeholder}
           aria-label={props.label}
           aria-describedby="basic-addon2"
         />
         <InputGroup.Append>
-          <Button variant="outline-secondary">Clear</Button>
+          <Button
+            variant="outline-secondary"
+            onClick={() => props.onChange("")}
+          >
+            Clear
+          </Button>
         </InputGroup.Append>
       </InputGroup>
     </Form.Group>
@@ -69,12 +75,10 @@ class FilterSet extends React.Component {
     this.handleFiltersChange = this.handleFiltersChange.bind(this);
   }
 
-  handleFiltersChange(e) {
-    const filterKey = e.target.name;
-    const filterValue = e.target.value;
+  handleFiltersChange(key, value) {
     const filters = Object.assign({}, this.state.filters);
 
-    filters[filterKey] = filterValue;
+    filters[key] = value;
 
     this.setState({
       filters: filters,
@@ -93,8 +97,11 @@ class FilterSet extends React.Component {
                 key={field.filterKey}
                 name={field.filterKey}
                 label={field.name}
+                value={this.state.filters[field.filterKey]}
                 placeholder={`Filter on ${field.name}`}
-                onChange={this.handleFiltersChange}
+                onChange={
+                  (value) => this.handleFiltersChange(field.filterKey, value)
+                }
               />
           )}
           <SearchBox
