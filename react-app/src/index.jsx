@@ -142,7 +142,11 @@ function TableHeaderItem(props) {
       {props.sortKey ? (
         <button
           className="btn btn-link thead" href="#"
-          onClick={(e) => props.onClick(e, newSortKey)}
+          onClick={
+            (e) => {
+              e.preventDefault();
+              props.onClick(newSortKey);
+            }}
         >
           {label}
         </button>
@@ -241,8 +245,7 @@ class DataTable extends React.Component {
     });
   }
 
-  handleSortChange(e, sortKey) {
-    e.preventDefault();
+  handleSortChange(sortKey) {
     this.updateState({
       sortKey: sortKey,
     });
