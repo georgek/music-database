@@ -17,7 +17,7 @@ import Table from "react-bootstrap/Table";
 function buildQuery(object) {
   const items = Object.keys(object).map(
     (key) =>
-      `${key}=${object[key]}`
+      `${key}=${encodeURIComponent(object[key])}`
   );
   return items.join("&");
 }
