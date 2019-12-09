@@ -1,8 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
+
 import Pagination from "react-js-pagination";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./index.css";
+
+import AwesomeDebouncePromise from 'awesome-debounce-promise';
 
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
@@ -13,6 +14,9 @@ import Form from "react-bootstrap/Form";
 import FormControl from "react-bootstrap/FormControl";
 import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
+
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./index.css";
 
 function buildQuery(object) {
   const items = Object.keys(object).map(
@@ -170,13 +174,14 @@ class DataTable extends React.Component {
       filters: {},
     };
 
+    this.fetch = this.fetch.bind(this);
     this.handlePageChange = this.handlePageChange.bind(this);
     this.handleSortChange = this.handleSortChange.bind(this);
     this.handleSearchStringChange = this.handleSearchStringChange.bind(this);
     this.handleFiltersChange = this.handleFiltersChange.bind(this);
   }
 
-  fetch(limit, offset, sortKey, searchString, filters) {
+  fetch(url, limit, offset, sortKey, searchString, filters) {
     let query = {
       limit: limit,
       offset: offset,
@@ -185,9 +190,41 @@ class DataTable extends React.Component {
     };
     query = Object.assign(query, filters);
     const queryString = buildQuery(query);
-    const url = `${this.props.recordsUrl}?${queryString}`;
-    console.log(url);
-    return fetch(url)
+    const fullUrl = `${url}?${queryString}`;
+    console.log(fullUrl);
+    return fetch(fullUrl);
+  }
+
+  fetchDebounced = AwesomeDebouncePromise(this.fetch, 300);
+
+  async updateState(updatedState) {
+    this.setState(updatedState);
+    let newState = Object.assign({}, this.state);
+    newState = Object.assign(newState, updatedState);
+    const response = await this.fetchDebounced(
+      this.props.recordsUrl,
+      this.recordsPerPage,
+      newState.currentOffset,
+      newState.sortKey,
+      newState.searchString,
+      newState.filters,
+    );
+    const data = await response.json();
+    this.setState({
+      currentRecords: data.results,
+      totalRecords: data.count,
+    });
+  }
+
+  componentDidMount() {
+    this.fetch(
+      this.props.recordsUrl,
+      this.recordsPerPage,
+      this.state.currentOffset,
+      this.state.sortKey,
+      this.state.searchString,
+      this.state.filters,
+    )
       .then(response => response.json())
       .then(data => this.setState({
         currentRecords: data.results,
@@ -195,30 +232,12 @@ class DataTable extends React.Component {
       }));
   }
 
-  updateState(updatedState) {
-    let state = Object.assign({}, this.state);
-    state = Object.assign(state, updatedState);
-    this.fetch(
-      this.recordsPerPage,
-      state.currentOffset,
-      state.sortKey,
-      state.searchString,
-      state.filters,
-    ).then(
-      () => this.setState(updatedState)
-    ).then(
-      () => this.handlePageChange(this.state.currentPage)
-    );
+  componentDidUpdate() {
+    this.handlePageChange(this.state.currentPage);
   }
 
-  componentDidMount() {
-    this.fetch(
-      this.recordsPerPage,
-      this.state.currentOffset,
-      this.state.sortKey,
-      this.state.searchString,
-      this.state.filters,
-    );
+  componentWillUnmount() {
+    this.setState = () => {};
   }
 
   handlePageChange(page) {
