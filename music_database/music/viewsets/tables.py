@@ -30,6 +30,8 @@ class TrackTableViewSet(viewsets.ReadOnlyModelViewSet):
     ]
     search_fields = [
         "name",
+        "album__title",
+        "album__artist__name",
     ]
     filterset_fields = [
         "name",
