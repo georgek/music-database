@@ -159,6 +159,20 @@ function TableHeaderItem(props) {
   );
 }
 
+function TableItem(props) {
+  const value = props.render
+        ? props.render(props.value)
+        : props.value;
+  if (props.schemaKey === "id") {
+    return (
+      <th scope="row">{value}</th>
+    );
+  }
+  return (
+    <td>{value}</td>
+  );
+}
+
 class DataTable extends React.Component {
   constructor(props) {
     super(props);
@@ -299,7 +313,6 @@ class DataTable extends React.Component {
             <Table striped hover>
               <thead>
                 <tr>
-                  <th>#</th>
                   {this.props.schema.map(
                     (item) =>
                       <TableHeaderItem
@@ -315,16 +328,16 @@ class DataTable extends React.Component {
               </thead>
               <tbody>
                 {this.state.currentRecords.map(
-                  (record, index) =>
+                  (record) =>
                     <tr key={record.id}>
-                      <th scope="row">{index+this.state.currentOffset+1}</th>
                       {this.props.schema.map(
                         (item) =>
-                          <td key={item.key}>
-                            {item.render ?
-                             item.render(record[item.key]) :
-                             record[item.key]}
-                          </td>
+                          <TableItem
+                            key={item.key}
+                            schemaKey={item.key}
+                            value={record[item.key]}
+                            render={item.render}
+                          />
                       )}
                     </tr>
                 )}
