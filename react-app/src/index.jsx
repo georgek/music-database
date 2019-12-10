@@ -7,12 +7,10 @@ import AwesomeDebouncePromise from 'awesome-debounce-promise';
 
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
-import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import InputGroup from "react-bootstrap/InputGroup";
 import Form from "react-bootstrap/Form";
 import FormControl from "react-bootstrap/FormControl";
-import Row from "react-bootstrap/Row";
 import Table from "react-bootstrap/Table";
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -298,74 +296,62 @@ class DataTable extends React.Component {
 
   render() {
     return (
-      <Container>
-        <Row>
-          <Col>
-            <FilterSet
-              schema={this.props.schema}
-              onFiltersChange={this.handleFiltersChange}
-              onSearchStringChange={this.handleSearchStringChange}
-            />
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <Table striped hover>
-              <thead>
-                <tr>
+      <>
+        <FilterSet
+          schema={this.props.schema}
+          onFiltersChange={this.handleFiltersChange}
+          onSearchStringChange={this.handleSearchStringChange}
+        />
+        <Table striped hover>
+          <thead>
+            <tr>
+              {this.props.schema.map(
+                (item) =>
+                  <TableHeaderItem
+                    key={item.sortKey}
+                    name={item.name}
+                    sortKey={item.sortKey}
+                    sortedAsc={this.state.sortKey === item.sortKey}
+                    sortedDesc={this.state.sortKey === "-" + item.sortKey}
+                    onClick={this.handleSortChange}
+                  />
+              )}
+            </tr>
+          </thead>
+          <tbody>
+            {this.state.currentRecords.map(
+              (record) =>
+                <tr key={record.id}>
                   {this.props.schema.map(
                     (item) =>
-                      <TableHeaderItem
-                        key={item.sortKey}
-                        name={item.name}
-                        sortKey={item.sortKey}
-                        sortedAsc={this.state.sortKey === item.sortKey}
-                        sortedDesc={this.state.sortKey === "-" + item.sortKey}
-                        onClick={this.handleSortChange}
+                      <TableItem
+                        key={item.key}
+                        schemaKey={item.key}
+                        value={record[item.key]}
+                        render={item.render}
                       />
                   )}
                 </tr>
-              </thead>
-              <tbody>
-                {this.state.currentRecords.map(
-                  (record) =>
-                    <tr key={record.id}>
-                      {this.props.schema.map(
-                        (item) =>
-                          <TableItem
-                            key={item.key}
-                            schemaKey={item.key}
-                            value={record[item.key]}
-                            render={item.render}
-                          />
-                      )}
-                    </tr>
-                )}
-              </tbody>
-            </Table>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <nav aria-label="Table pagination">
-              <Pagination
-                onChange={this.handlePageChange}
-                activePage={this.state.currentPage}
-                itemsCountPerPage={this.recordsPerPage}
-                totalItemsCount={this.state.totalRecords}
-                pageRangeDisplayed="5"
-                innerClass="pagination justify-content-center"
-                itemClass="page-item"
-                linkClass="page-link"
-                activeClass="active"
-                disabledClass="disabled"
-                prevPageText="‹"
-                nextPageText="›"
-              />
-            </nav>
-          </Col>
-        </Row>
-      </Container>
+            )}
+          </tbody>
+        </Table>
+        <nav aria-label="Table pagination">
+          <Pagination
+            onChange={this.handlePageChange}
+            activePage={this.state.currentPage}
+            itemsCountPerPage={this.recordsPerPage}
+            totalItemsCount={this.state.totalRecords}
+            pageRangeDisplayed="5"
+            innerClass="pagination justify-content-center"
+            itemClass="page-item"
+            linkClass="page-link"
+            activeClass="active"
+            disabledClass="disabled"
+            prevPageText="‹"
+            nextPageText="›"
+          />
+        </nav>
+      </>
     );
   }
 }
@@ -411,10 +397,14 @@ function App(props) {
     },
   ];
 
-  return <DataTable
-           schema={schema}
-           recordsUrl="http://127.0.0.1:8000/tracks-table/"
-         />;
+  return (
+    <Container>
+      <DataTable
+        schema={schema}
+        recordsUrl="http://127.0.0.1:8000/tracks-table/"
+      />
+    </Container>
+  );
 }
 
 ReactDOM.render(
