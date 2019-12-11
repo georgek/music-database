@@ -245,6 +245,8 @@ class DataTable extends React.Component {
   }
 
   componentDidUpdate() {
+    // change page in case the current page is no longer valid after the
+    // filters changed (ie. there are fewer records now than there were)
     this.handlePageChange(this.state.currentPage);
   }
 
