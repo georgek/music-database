@@ -184,6 +184,7 @@ class DataTable extends React.Component {
       sortKey: "",
       searchString: "",
       filters: {},
+      loading: true,
     };
 
     this.fetch = this.fetch.bind(this);
@@ -211,6 +212,7 @@ class DataTable extends React.Component {
 
   async updateState(updatedState) {
     this.setState(updatedState);
+    this.setState({loading: true});
     let newState = Object.assign({}, this.state);
     newState = Object.assign(newState, updatedState);
     const response = await this.fetchDebounced(
@@ -225,6 +227,7 @@ class DataTable extends React.Component {
     this.setState({
       currentRecords: data.results,
       totalRecords: data.count,
+      loading: false,
     });
   }
 
@@ -241,6 +244,7 @@ class DataTable extends React.Component {
       .then(data => this.setState({
         currentRecords: data.results,
         totalRecords: data.count,
+        loading: false,
       }));
   }
 
@@ -304,7 +308,11 @@ class DataTable extends React.Component {
           onFiltersChange={this.handleFiltersChange}
           onSearchStringChange={this.handleSearchStringChange}
         />
-        <Table striped hover>
+        <Table
+          striped
+          hover
+          className={this.state.loading && "loading"}
+        >
           <thead>
             <tr>
               {this.props.schema.map(
