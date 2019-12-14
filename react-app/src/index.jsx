@@ -59,6 +59,32 @@ function SearchBox(props) {
   );
 }
 
+function ChoiceBox(props) {
+  return (
+    <Form.Group>
+      <Form.Label>{props.label}</Form.Label>
+      <InputGroup className="mb-3">
+        <FormControl
+          as="select"
+          name={props.name}
+          value={props.value}
+          onChange={(e) => props.onChange(e.target.value)}
+          aria-label={props.label}
+          aria-describedby="basic-addon2"
+        >
+          <option value="">(Choose {props.label})</option>
+          {props.choices.map(
+            (choice) =>
+              <option key={choice.key} value={choice.key}>
+                {choice.name}
+              </option>
+          )}
+        </FormControl>
+      </InputGroup>
+    </Form.Group>
+  );
+}
+
 class FilterSet extends React.Component {
   constructor(props) {
     super(props);
@@ -102,17 +128,38 @@ class FilterSet extends React.Component {
         <Card.Title>Filters</Card.Title>
         <Form>
           {this.props.filters.map(
-            (field) =>
-              <SearchBox
-                key={field.key}
-                name={field.key}
-                label={field.name}
-                value={this.state.filters[field.key]}
-                placeholder={`Filter on ${field.name}`}
-                onChange={
-                  (value) => this.handleFiltersChange(field.key, value)
-                }
-              />
+            (field) => {
+              switch (field.type) {
+              case "search":
+                return (
+                  <SearchBox
+                    key={field.key}
+                    name={field.key}
+                    label={field.name}
+                    value={this.state.filters[field.key]}
+                    placeholder={`Filter on ${field.name}`}
+                    onChange={
+                      (value) => this.handleFiltersChange(field.key, value)
+                    }
+                  />
+                );
+              case "choice":
+                return (
+                  <ChoiceBox
+                    key={field.key}
+                    name={field.key}
+                    label={field.name}
+                    choices={field.choices}
+                    value={this.state.filters[field.key]}
+                    onChange={
+                      (value) => this.handleFiltersChange(field.key, value)
+                    }
+                  />
+                );
+              default:
+                return null;
+              }
+            }
           )}
         </Form>
       </Card>
@@ -408,25 +455,35 @@ function App(props) {
     {
       name: "Name",
       key: "name",
-      type: "string",
+      type: "search",
     },
     {
       name: "Album",
       key: "album__title",
-      type: "string",
+      type: "search",
     },
     {
       name: "Artist",
       key: "album__artist__name",
-      type: "string",
+      type: "search",
     },
     {
       name: "Genre",
-      key: "genre__name",
+      key: "genre",
       type: "choice",
       choices: [
-        "Rock",
-        "Jazz",
+        {
+          key: 1,
+          name: "Rock",
+        },
+        {
+          key: 2,
+          name: "Jazz",
+        },
+        {
+          key: 3,
+          name: "Metal",
+        },
       ],
     },
     {
