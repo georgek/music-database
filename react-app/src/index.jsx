@@ -210,12 +210,13 @@ class DataTable extends React.Component {
 
   fetchDebounced = AwesomeDebouncePromise(this.fetch, 300);
 
-  async updateState(updatedState) {
+  async updateState(updatedState, instant=false) {
     this.setState(updatedState);
     this.setState({loading: true});
     let newState = Object.assign({}, this.state);
     newState = Object.assign(newState, updatedState);
-    const response = await this.fetchDebounced(
+    const fetchFun = instant ? this.fetch : this.fetchDebounced;
+    const response = await fetchFun(
       this.props.recordsUrl,
       this.recordsPerPage,
       newState.currentOffset,
@@ -276,16 +277,22 @@ class DataTable extends React.Component {
 
     const offset = (page - 1) * this.recordsPerPage;
 
-    this.updateState({
-      currentPage: page,
-      currentOffset: offset,
-    });
+    this.updateState(
+      {
+        currentPage: page,
+        currentOffset: offset,
+      },
+      true,
+    );
   }
 
   handleSortChange(sortKey) {
-    this.updateState({
-      sortKey: sortKey,
-    });
+    this.updateState(
+      {
+        sortKey: sortKey,
+      },
+      true,
+    );
   }
 
   handleSearchStringChange(string) {
