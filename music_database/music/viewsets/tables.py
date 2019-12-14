@@ -37,4 +37,5 @@ class TrackTableViewSet(viewsets.ReadOnlyModelViewSet):
         "name",
         "album__title",
         "album__artist__name",
+        "genre__name",
     ]

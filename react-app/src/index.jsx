@@ -63,10 +63,8 @@ class FilterSet extends React.Component {
   constructor(props) {
     super(props);
 
-    this.filterKeys = props.schema.filter(
-      (field) => field.filterKey
-    ).map(
-      (field) => field.filterKey
+    this.filterKeys = props.filters.map(
+      (field) => field.key
     );
     const filterEntries = this.filterKeys.map(
       (key) => [key, ""]
@@ -103,26 +101,19 @@ class FilterSet extends React.Component {
       <Card body>
         <Card.Title>Filters</Card.Title>
         <Form>
-          {this.props.schema.map(
-            (field) => field.filterKey &&
+          {this.props.filters.map(
+            (field) =>
               <SearchBox
-                key={field.filterKey}
-                name={field.filterKey}
+                key={field.key}
+                name={field.key}
                 label={field.name}
-                value={this.state.filters[field.filterKey]}
+                value={this.state.filters[field.key]}
                 placeholder={`Filter on ${field.name}`}
                 onChange={
-                  (value) => this.handleFiltersChange(field.filterKey, value)
+                  (value) => this.handleFiltersChange(field.key, value)
                 }
               />
           )}
-          <SearchBox
-            name="search"
-            label="Fuzzy search"
-            value={this.state.searchString}
-            placeholder="Search all fields"
-            onChange={this.handleSearchStringChange}
-          />
         </Form>
       </Card>
     );
@@ -311,7 +302,7 @@ class DataTable extends React.Component {
     return (
       <>
         <FilterSet
-          schema={this.props.schema}
+          filters={this.props.filters}
           onFiltersChange={this.handleFiltersChange}
           onSearchStringChange={this.handleSearchStringChange}
         />
@@ -413,11 +404,43 @@ function App(props) {
       filterKey: null,
     },
   ];
+  const filters = [
+    {
+      name: "Name",
+      key: "name",
+      type: "string",
+    },
+    {
+      name: "Album",
+      key: "album__title",
+      type: "string",
+    },
+    {
+      name: "Artist",
+      key: "album__artist__name",
+      type: "string",
+    },
+    {
+      name: "Genre",
+      key: "genre__name",
+      type: "choice",
+      choices: [
+        "Rock",
+        "Jazz",
+      ],
+    },
+    {
+      name: "Fuzzy search",
+      key: "search",
+      type: "search",
+    },
+  ];
 
   return (
     <Container>
       <DataTable
         schema={schema}
+        filters={filters}
         recordsUrl="http://127.0.0.1:8000/tracks-table/"
       />
     </Container>
