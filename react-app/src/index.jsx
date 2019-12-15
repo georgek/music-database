@@ -81,7 +81,7 @@ function ChoiceBox(props) {
           aria-label={props.label}
           aria-describedby="basic-addon2"
         >
-          <option value="">(Choose {props.label})</option>
+          <option value="">(All)</option>
           {choices.map(
             (choice) =>
               <option key={choice.id} value={choice.id}>
@@ -362,6 +362,9 @@ class DataTable extends React.Component {
           onFiltersChange={this.handleFiltersChange}
           onSearchStringChange={this.handleSearchStringChange}
         />
+        <Card body>
+          Showing {this.recordsPerPage} of {this.state.totalRecords} records.
+        </Card>
         <Table
           striped
           hover
