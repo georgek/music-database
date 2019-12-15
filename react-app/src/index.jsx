@@ -487,7 +487,7 @@ function App(props) {
       ],
     },
     {
-      name: "Fuzzy search",
+      name: "All fields",
       key: "search",
       type: "search",
     },
