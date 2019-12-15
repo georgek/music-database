@@ -363,7 +363,8 @@ class DataTable extends React.Component {
           onSearchStringChange={this.handleSearchStringChange}
         />
         <Card body>
-          Showing {this.recordsPerPage} of {this.state.totalRecords} records.
+          Showing {this.state.currentRecords.length}
+          of {this.state.totalRecords} records.
         </Card>
         <Table
           striped
