@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 
 import Pagination from "react-js-pagination";
@@ -60,6 +60,15 @@ function SearchBox(props) {
 }
 
 function ChoiceBox(props) {
+  const [choices, setChoices] = useState([]);
+
+  useEffect(() => {
+    console.log(props.choicesUrl);
+    fetch(props.choicesUrl)
+      .then(response => response.json())
+      .then(data => setChoices(data.results));
+  }, [props.choicesUrl]);
+
   return (
     <Form.Group>
       <Form.Label>{props.label}</Form.Label>
@@ -73,9 +82,9 @@ function ChoiceBox(props) {
           aria-describedby="basic-addon2"
         >
           <option value="">(Choose {props.label})</option>
-          {props.choices.map(
+          {choices.map(
             (choice) =>
-              <option key={choice.key} value={choice.key}>
+              <option key={choice.id} value={choice.id}>
                 {choice.name}
               </option>
           )}
@@ -149,7 +158,7 @@ class FilterSet extends React.Component {
                     key={field.key}
                     name={field.key}
                     label={field.name}
-                    choices={field.choices}
+                    choicesUrl={field.choicesUrl}
                     value={this.state.filters[field.key]}
                     onChange={
                       (value) => this.handleFiltersChange(field.key, value)
@@ -471,20 +480,8 @@ function App(props) {
       name: "Genre",
       key: "genre",
       type: "choice",
-      choices: [
-        {
-          key: 1,
-          name: "Rock",
-        },
-        {
-          key: 2,
-          name: "Jazz",
-        },
-        {
-          key: 3,
-          name: "Metal",
-        },
-      ],
+      choices: [],
+      choicesUrl: "http://127.0.0.1:8000/genres/",
     },
     {
       name: "All fields",
