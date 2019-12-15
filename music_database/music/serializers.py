@@ -30,7 +30,11 @@ class MediatypeSerializer(serializers.HyperlinkedModelSerializer):
 class GenreSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Genre
-        fields = "__all__"
+        fields = [
+            "url",
+            "id",
+            "name",
+        ]
 
 
 class TrackSerializer(serializers.HyperlinkedModelSerializer):
