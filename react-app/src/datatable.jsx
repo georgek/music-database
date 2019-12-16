@@ -73,7 +73,6 @@ export default class DataTable extends React.Component {
       currentOffset: 0,
       totalRecords: 0,
       sortKey: "",
-      searchString: "",
       filters: {},
       loading: true,
     };
@@ -81,16 +80,14 @@ export default class DataTable extends React.Component {
     this.fetch = this.fetch.bind(this);
     this.handlePageChange = this.handlePageChange.bind(this);
     this.handleSortChange = this.handleSortChange.bind(this);
-    this.handleSearchStringChange = this.handleSearchStringChange.bind(this);
     this.handleFiltersChange = this.handleFiltersChange.bind(this);
   }
 
-  fetch(url, limit, offset, sortKey, searchString, filters) {
+  fetch(url, limit, offset, sortKey, filters) {
     let query = {
       limit: limit,
       offset: offset,
       ordering: sortKey,
-      search: searchString,
     };
     query = Object.assign(query, filters);
     const queryString = buildQuery(query);
@@ -111,7 +108,6 @@ export default class DataTable extends React.Component {
       this.recordsPerPage,
       newState.currentOffset,
       newState.sortKey,
-      newState.searchString,
       newState.filters,
     );
     const data = await response.json();
@@ -128,7 +124,6 @@ export default class DataTable extends React.Component {
       this.recordsPerPage,
       this.state.currentOffset,
       this.state.sortKey,
-      this.state.searchString,
       this.state.filters,
     )
       .then(response => response.json())
@@ -185,12 +180,6 @@ export default class DataTable extends React.Component {
     );
   }
 
-  handleSearchStringChange(string) {
-    this.updateState({
-      searchString: string,
-    });
-  }
-
   handleFiltersChange(filters) {
     this.updateState({
       filters: filters,
@@ -203,7 +192,6 @@ export default class DataTable extends React.Component {
         <FilterSet
           filters={this.props.filters}
           onFiltersChange={this.handleFiltersChange}
-          onSearchStringChange={this.handleSearchStringChange}
         />
         <Card body>
           Showing {this.state.currentRecords.length} of
