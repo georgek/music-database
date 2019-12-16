@@ -101,7 +101,6 @@ export default class FilterSet extends React.Component {
       activeFilters: newActiveFilters,
       currentFilters: newCurrentFilters,
     });
-    this.props.onFiltersChange(newCurrentFilters);
   }
 
   handleRemoveFilter(index) {
