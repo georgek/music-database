@@ -40,7 +40,6 @@ function ChoiceBox(props) {
   const [choices, setChoices] = useState([]);
 
   useEffect(() => {
-    console.log(props.choicesUrl);
     fetch(props.choicesUrl)
       .then(response => response.json())
       .then(data => setChoices(data.results));

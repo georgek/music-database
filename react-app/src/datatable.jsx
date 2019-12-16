@@ -95,7 +95,6 @@ export default class DataTable extends React.Component {
     query = Object.assign(query, filters);
     const queryString = buildQuery(query);
     const fullUrl = `${url}?${queryString}`;
-    console.log(fullUrl);
     return fetch(fullUrl);
   }
 
