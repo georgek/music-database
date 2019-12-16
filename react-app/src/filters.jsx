@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
+import Dropdown from "react-bootstrap/Dropdown";
 import InputGroup from "react-bootstrap/InputGroup";
 import Form from "react-bootstrap/Form";
 import FormControl from "react-bootstrap/FormControl";
@@ -22,15 +23,7 @@ function SearchBox(props) {
           aria-label={props.label}
           aria-describedby="basic-addon2"
         />
-        {props.value &&
-          <InputGroup.Append>
-            <Button
-              variant="outline-secondary"
-              onClick={() => props.onChange("")}
-            >
-              Clear
-            </Button>
-          </InputGroup.Append>}
+        <Button variant="danger" onClick={props.onRemove}>Remove</Button>
       </InputGroup>
     </Form.Group>
   );
@@ -65,6 +58,7 @@ function ChoiceBox(props) {
               </option>
           )}
         </FormControl>
+        <Button variant="danger" onClick={props.onRemove}>Remove</Button>
       </InputGroup>
     </Form.Group>
   );
@@ -74,28 +68,55 @@ export default class FilterSet extends React.Component {
   constructor(props) {
     super(props);
 
-    this.filterKeys = props.filters.map(
-      (field) => field.key
-    );
-    const filterEntries = this.filterKeys.map(
-      (key) => [key, ""]
-    );
-
     this.state = {
-      filters: Object.fromEntries(filterEntries),
+      availableFilters: props.filters.slice(),
+      activeFilters: [],
+      currentFilters: {},
     };
     this.handleFiltersChange = this.handleFiltersChange.bind(this);
+    this.handleAddFilter = this.handleAddFilter.bind(this);
+    this.handleRemoveFilter = this.handleRemoveFilter.bind(this);
   }
 
   handleFiltersChange(key, value) {
-    const filters = Object.assign({}, this.state.filters);
+    const filters = Object.assign({}, this.state.currentFilters);
 
     filters[key] = value;
 
     this.setState({
-      filters: filters,
+      currentFilters: filters,
     });
     this.props.onFiltersChange(filters);
+  }
+
+  handleAddFilter(index) {
+    const newActiveFilters = Array.from(this.state.activeFilters);
+    const newAvailableFilters = Array.from(this.state.availableFilters);
+    const newCurrentFilters = Object.assign({}, this.state.currentFilters);
+    newActiveFilters.push(this.state.availableFilters[index]);
+    newAvailableFilters.splice(index, 1);
+    newCurrentFilters[this.state.availableFilters[index].key] = "";
+    this.setState({
+      availableFilters: newAvailableFilters,
+      activeFilters: newActiveFilters,
+      currentFilters: newCurrentFilters,
+    });
+    this.props.onFiltersChange(newCurrentFilters);
+  }
+
+  handleRemoveFilter(index) {
+    const newActiveFilters = Array.from(this.state.activeFilters);
+    const newAvailableFilters = Array.from(this.state.availableFilters);
+    const newCurrentFilters = Object.assign({}, this.state.currentFilters);
+    newAvailableFilters.push(this.state.activeFilters[index]);
+    newActiveFilters.splice(index, 1);
+    delete newCurrentFilters[this.state.activeFilters[index].key];
+    this.setState({
+      availableFilters: newAvailableFilters,
+      activeFilters: newActiveFilters,
+      currentFilters: newCurrentFilters,
+    });
+    this.props.onFiltersChange(newCurrentFilters);
   }
 
   render() {
@@ -103,33 +124,35 @@ export default class FilterSet extends React.Component {
       <Card body>
         <Card.Title>Filters</Card.Title>
         <Form>
-          {this.props.filters.map(
-            (field) => {
-              switch (field.type) {
+          {this.state.activeFilters.map(
+            (filter, index) => {
+              switch (filter.type) {
               case "search":
                 return (
                   <SearchBox
-                    key={field.key}
-                    name={field.key}
-                    label={field.name}
-                    value={this.state.filters[field.key]}
-                    placeholder={`Filter on ${field.name}`}
+                    key={filter.key}
+                    name={filter.key}
+                    label={filter.name}
+                    value={this.state.currentFilters[filter.key]}
+                    placeholder={`Filter on ${filter.name}`}
                     onChange={
-                      (value) => this.handleFiltersChange(field.key, value)
+                      (value) => this.handleFiltersChange(filter.key, value)
                     }
+                    onRemove={() => this.handleRemoveFilter(index)}
                   />
                 );
               case "choice":
                 return (
                   <ChoiceBox
-                    key={field.key}
-                    name={field.key}
-                    label={field.name}
-                    choicesUrl={field.choicesUrl}
-                    value={this.state.filters[field.key]}
+                    key={filter.key}
+                    name={filter.key}
+                    label={filter.name}
+                    choicesUrl={filter.choicesUrl}
+                    value={this.state.currentFilters[filter.key]}
                     onChange={
-                      (value) => this.handleFiltersChange(field.key, value)
+                      (value) => this.handleFiltersChange(filter.key, value)
                     }
+                    onRemove={() => this.handleRemoveFilter(index)}
                   />
                 );
               default:
@@ -138,6 +161,23 @@ export default class FilterSet extends React.Component {
             }
           )}
         </Form>
+        {this.state.availableFilters.length > 0 &&
+         <Dropdown>
+           <Dropdown.Toggle variant="primary" id="addFilterDropdown">
+             Add filter
+           </Dropdown.Toggle>
+           <Dropdown.Menu>
+             {this.state.availableFilters.map(
+               (filter, index) =>
+                 <Dropdown.Item
+                   key={filter.key}
+                   onClick={() => this.handleAddFilter(index)}
+                 >
+                   {filter.name}
+                 </Dropdown.Item>
+             )}
+           </Dropdown.Menu>
+         </Dropdown>}
       </Card>
     );
   }
