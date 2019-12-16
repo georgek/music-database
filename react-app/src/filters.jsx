@@ -83,10 +83,8 @@ export default class FilterSet extends React.Component {
 
     this.state = {
       filters: Object.fromEntries(filterEntries),
-      searchString: "",
     };
     this.handleFiltersChange = this.handleFiltersChange.bind(this);
-    this.handleSearchStringChange = this.handleSearchStringChange.bind(this);
   }
 
   handleFiltersChange(key, value) {
@@ -98,13 +96,6 @@ export default class FilterSet extends React.Component {
       filters: filters,
     });
     this.props.onFiltersChange(filters);
-  }
-
-  handleSearchStringChange(value) {
-    this.setState({
-      searchString: value,
-    });
-    this.props.onSearchStringChange(value);
   }
 
   render() {
