@@ -205,7 +205,7 @@ export default class DataTable extends React.Component {
           <thead>
             <tr>
               {this.props.schema.map(
-                (item) =>
+                (item) => (
                   <TableHeaderItem
                     key={item.sortKey}
                     name={item.name}
@@ -214,24 +214,24 @@ export default class DataTable extends React.Component {
                     sortedDesc={this.state.sortKey === "-" + item.sortKey}
                     onClick={this.handleSortChange}
                   />
-              )}
+                ))}
             </tr>
           </thead>
           <tbody>
             {this.state.currentRecords.map(
-              (record) =>
+              (record) => (
                 <tr key={record.id}>
                   {this.props.schema.map(
-                    (item) =>
+                    (item) => (
                       <TableItem
                         key={item.key}
                         schemaKey={item.key}
                         value={record[item.key]}
                         render={item.render}
                       />
-                  )}
+                    ))}
                 </tr>
-            )}
+              ))}
           </tbody>
         </Table>
         <nav aria-label="Table pagination">
