@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
@@ -11,11 +11,16 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
 
 function SearchBox(props) {
+  const input = useRef(null);
+  useEffect(() => {
+    input.current.focus();
+  }, []);
   return (
     <Form.Group>
       <Form.Label>{props.label}</Form.Label>
       <InputGroup className="mb-3">
         <FormControl
+          ref={input}
           name={props.name}
           value={props.value}
           onChange={(e) => props.onChange(e.target.value)}
@@ -170,7 +175,7 @@ export default class FilterSet extends React.Component {
           )}
         </Form>
         {this.filterKeys.length > this.state.activeFilters.length &&
-         <Dropdown>
+         <Dropdown onSelect={key => this.handleAddFilter(key)}>
            <Dropdown.Toggle variant="primary" id="addFilterDropdown">
              Add filter
            </Dropdown.Toggle>
@@ -183,7 +188,7 @@ export default class FilterSet extends React.Component {
                filter => (
                    <Dropdown.Item
                      key={filter.key}
-                     onClick={() => this.handleAddFilter(filter.key)}
+                     eventKey={filter.key}
                    >
                      {filter.name}
                    </Dropdown.Item>
