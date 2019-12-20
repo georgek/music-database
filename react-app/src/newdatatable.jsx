@@ -62,6 +62,8 @@ function TableItem(props) {
   );
 }
 
+const debouncedFetch = AwesomeDebouncePromise(fetch, 300);
+
 export default function DataTable(props) {
   const recordsPerPage = 10;
   const [currentRecords, setCurrentRecords] = useState([]);
@@ -72,21 +74,23 @@ export default function DataTable(props) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let query = {
-      limit: recordsPerPage,
-      offset:(currentPage - 1) * recordsPerPage,
-      ordering: sortKey,
-    };
-    query = Object.assign(query, filters);
-    const queryString = buildQuery(query);
-    const fullUrl = `${props.recordsUrl}?${queryString}`;
-    fetch(fullUrl)
-      .then(response => response.json())
-      .then(data => {
-        setCurrentRecords(data.results);
-        setTotalRecords(data.count);
-        setLoading(false);
-      });
+    async function fetchData() {
+      setLoading(true);
+      let query = {
+        limit: recordsPerPage,
+        offset:(currentPage - 1) * recordsPerPage,
+        ordering: sortKey,
+      };
+      query = Object.assign(query, filters);
+      const queryString = buildQuery(query);
+      const fullUrl = `${props.recordsUrl}?${queryString}`;
+      const response = await debouncedFetch(fullUrl);
+      const data = await response.json();
+      setCurrentRecords(data.results);
+      setTotalRecords(data.count);
+      setLoading(false);
+    }
+    fetchData();
   }, [props.recordsUrl, currentPage, sortKey, filters]);
 
   useEffect(() => {
