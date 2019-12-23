@@ -1,9 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
+import { BrowserRouter as Router, Route } from "react-router-dom";
+
+import { QueryParamProvider } from "use-query-params";
+
 import Container from "react-bootstrap/Container";
 
-import DataTable from "./datatable.jsx";
+import DataTable from "./newdatatable.jsx";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
@@ -98,6 +102,10 @@ function App(props) {
 }
 
 ReactDOM.render(
-  <App />,
+  <Router>
+    <QueryParamProvider ReactRouterRoute={Route}>
+      <App />
+    </QueryParamProvider>
+  </Router>,
   document.getElementById("root")
 );

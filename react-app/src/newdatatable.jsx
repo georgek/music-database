@@ -4,6 +4,8 @@ import Pagination from "react-js-pagination";
 
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
 
+import { useQueryParam, NumberParam, ObjectParam, StringParam } from "use-query-params";
+
 import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
 
@@ -68,14 +70,16 @@ const debouncedFetch = AwesomeDebouncePromise(fetch, 300);
 
 export default function DataTable(props) {
   const recordsPerPage = 10;
+
   const [currentRecords, setCurrentRecords] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
-  const [sortKey, setSortKey] = useState("");
-  const [filters, setFilters] = useState({});
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const [currentPage, setCurrentPage] = useQueryParam("page", NumberParam);
+  const [sortKey, setSortKey] = useQueryParam("sort", StringParam);
+  const [filters, setFilters] = useQueryParam("filter", ObjectParam);
+
+  useEffect((thing) => {
     async function fetchData() {
       setLoading(true);
       let query = {
@@ -87,10 +91,12 @@ export default function DataTable(props) {
       const queryString = buildQuery(query);
       const fullUrl = `${props.recordsUrl}?${queryString}`;
       const response = await debouncedFetch(fullUrl);
-      const data = await response.json();
-      setCurrentRecords(data.results);
-      setTotalRecords(data.count);
-      setLoading(false);
+      if (response.status === 200) {
+        const data = await response.json();
+        setCurrentRecords(data.results);
+        setTotalRecords(data.count);
+        setLoading(false);
+      }
     }
     fetchData();
   }, [props.recordsUrl, currentPage, sortKey, filters]);
@@ -100,23 +106,21 @@ export default function DataTable(props) {
       totalRecords / recordsPerPage
     );
     if (totalPages === 0) {
-      setCurrentPage(1);
-    } else {
-      setCurrentPage(
-        currentPage => currentPage > totalPages ? totalPages : currentPage
-      );
+      setCurrentPage(1, "PushIn");
+    } else if (currentPage > totalPages) {
+      setCurrentPage(totalPages, "replaceIn");
     }
-  }, [totalRecords]);
+  }, [currentPage, setCurrentPage, totalRecords]);
 
   function handleSortChange(sortKey) {
-    setSortKey(sortKey);
+    setSortKey(sortKey, "replaceIn");
   }
 
   function handlePageChange(page) {
     if (page < 1) {
       page = 1;
     }
-    setCurrentPage(page);
+    setCurrentPage(page, "pushIn");
   }
 
   function handleFiltersChange(filters) {
