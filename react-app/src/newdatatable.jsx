@@ -79,7 +79,7 @@ export default function DataTable(props) {
   const [sortKey, setSortKey] = useQueryParam("sort", StringParam);
   const [filters, setFilters] = useQueryParam("filter", ObjectParam);
 
-  useEffect((thing) => {
+  useEffect(() => {
     async function fetchData() {
       setLoading(true);
       let query = {
