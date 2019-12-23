@@ -13,7 +13,8 @@ import "./index.css";
 function SearchBox(props) {
   const input = useRef(null);
   useEffect(() => {
-    input.current.focus();
+    const timeoutID = setTimeout(() => input.current.focus(), 100);
+    return () => clearTimeout(timeoutID);
   }, []);
   return (
     <Form.Group>
