@@ -75,9 +75,9 @@ export default class FilterSet extends React.Component {
     super(props);
 
     // this stores the original order of the filters
-    this.filterKeys = props.filters.map(filter => filter.key);
+    this.filterKeys = props.availableFilters.map(filter => filter.key);
 
-    const allFilters = props.filters.map(
+    const allFilters = props.availableFilters.map(
       filter => [filter.key, Object.assign({active: false}, filter)]
     );
 

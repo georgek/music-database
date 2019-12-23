@@ -94,7 +94,7 @@ function App(props) {
     <Container>
       <DataTable
         schema={schema}
-        filters={filters}
+        availableFilters={filters}
         recordsUrl="http://127.0.0.1:8000/tracks-table/"
       />
     </Container>

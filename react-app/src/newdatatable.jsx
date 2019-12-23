@@ -130,9 +130,10 @@ export default function DataTable(props) {
   return (
     <>
       <FilterSet
-          filters={props.filters}
-          onFiltersChange={handleFiltersChange}
-        />
+        availableFilters={props.availableFilters}
+        activeFilters={filters}
+        onFiltersChange={handleFiltersChange}
+      />
       <Card body>
         Showing {currentRecords.length} of
         {" "}{totalRecords} records.
