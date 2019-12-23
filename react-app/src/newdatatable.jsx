@@ -13,7 +13,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
 
 function buildQuery(object) {
-  const items = Object.keys(object).map(
+  const items = Object.keys(object).filter(
+    key => object[key]
+  ).map(
     (key) =>
       `${key}=${encodeURIComponent(object[key])}`
   );
