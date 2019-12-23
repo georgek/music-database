@@ -66,7 +66,8 @@ function TableItem(props) {
   );
 }
 
-const debouncedFetch = AwesomeDebouncePromise(fetch, 300);
+const debouncedFetch = AwesomeDebouncePromise(fetch, 50);
+const debouncedNop = AwesomeDebouncePromise(() => null, 300);
 
 export default function DataTable(props) {
   const recordsPerPage = 10;
@@ -90,7 +91,7 @@ export default function DataTable(props) {
       query = Object.assign(query, filters);
       const queryString = buildQuery(query);
       const fullUrl = `${props.recordsUrl}?${queryString}`;
-      const response = await debouncedFetch(fullUrl);
+      const response = await fetch(fullUrl);
       if (response.status === 200) {
         const data = await response.json();
         setCurrentRecords(data.results);
@@ -123,7 +124,9 @@ export default function DataTable(props) {
     setCurrentPage(page, "pushIn");
   }
 
-  function handleFiltersChange(filters) {
+  async function handleFiltersChange(filters) {
+    setLoading(true);
+    await debouncedNop(filters);
     setFilters(filters);
   }
 
