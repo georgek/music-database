@@ -26,38 +26,32 @@ function App(props) {
       key: "id",
       name: "ID",
       sortKey: "id",
-      filterKey: null,
     },
     {
       key: "name",
       name: "Name",
       sortKey: "name",
-      filterKey: "name",
     },
     {
       key: "album",
       name: "Album",
       sortKey: "album__title",
-      filterKey: "album__title",
     },
     {
       key: "artist",
       name: "Artist",
       sortKey: "album__artist__name",
-      filterKey: "album__artist__name",
     },
     {
       key: "milliseconds",
       name: "Length",
       sortKey: "milliseconds",
-      filterKey: null,
       render: displayLength,
     },
     {
       key: "genre",
       name: "Genre",
       sortKey: null,
-      filterKey: null,
     },
   ];
   const filters = [
