@@ -62,12 +62,12 @@ function App(props) {
     },
     {
       name: "Album",
-      key: "album__title",
+      key: "album",
       type: "search",
     },
     {
       name: "Artist",
-      key: "album__artist__name",
+      key: "artist",
       type: "search",
     },
     {

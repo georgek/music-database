@@ -3,8 +3,8 @@ from rest_framework import filters
 
 import django_filters
 
+from .filters import TrackTableFilter
 from ..models import Track
-
 from ..serializers import TrackTableSerializer
 
 
@@ -33,9 +33,4 @@ class TrackTableViewSet(viewsets.ReadOnlyModelViewSet):
         "album__title",
         "album__artist__name",
     ]
-    filterset_fields = [
-        "name",
-        "album__title",
-        "album__artist__name",
-        "genre",
-    ]
+    filterset_class = TrackTableFilter
