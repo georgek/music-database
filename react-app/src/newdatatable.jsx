@@ -2,14 +2,12 @@ import React, { useEffect, useState } from "react";
 
 import Pagination from "react-js-pagination";
 
-import AwesomeDebouncePromise from 'awesome-debounce-promise';
-
 import { useQueryParam, NumberParam, ObjectParam, StringParam } from "use-query-params";
 
 import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
 
-import FilterSet from "./filters.jsx";
+import FilterSet from "./newfilters.jsx";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
@@ -66,9 +64,6 @@ function TableItem(props) {
   );
 }
 
-const debouncedFetch = AwesomeDebouncePromise(fetch, 50);
-const debouncedNop = AwesomeDebouncePromise(() => null, 300);
-
 export default function DataTable(props) {
   const recordsPerPage = 10;
 
@@ -124,10 +119,20 @@ export default function DataTable(props) {
     setCurrentPage(page, "pushIn");
   }
 
-  async function handleFiltersChange(filters) {
-    setLoading(true);
-    await debouncedNop(filters);
+  function handleFiltersChange(filters) {
     setFilters(filters);
+  }
+
+  function handleAddFilter(filterKey) {
+    const newFilters = Object.assign({}, filters);
+    newFilters[filterKey] = "";
+    setFilters(newFilters);
+  }
+
+  function handleRemoveFilter(filterKey) {
+    const newFilters = Object.assign({}, filters);
+    delete newFilters[filterKey];
+    setFilters(newFilters);
   }
 
   return (
@@ -136,6 +141,8 @@ export default function DataTable(props) {
         availableFilters={props.availableFilters}
         activeFilters={filters}
         onFiltersChange={handleFiltersChange}
+        onAddFilter={handleAddFilter}
+        onRemoveFilter={handleRemoveFilter}
       />
       <Card body>
         Showing {currentRecords.length} of
