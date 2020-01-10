@@ -58,9 +58,7 @@ class Track(models.Model):
         Mediatype, on_delete=models.CASCADE, db_column="MediaTypeId"
     )
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE, db_column="GenreId")
-    composer = models.CharField(
-        db_column="Composer", max_length=220, blank=True, null=True
-    )
+    composer = models.CharField(db_column="Composer", max_length=220, blank=True)
     milliseconds = models.IntegerField(db_column="Milliseconds")
     bytes = models.IntegerField(db_column="Bytes", blank=True, null=True)
     unitprice = models.DecimalField(
