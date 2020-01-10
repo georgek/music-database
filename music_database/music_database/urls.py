@@ -15,17 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-
-from rest_framework import routers
-
 from music.viewsets.models import (
-    ArtistViewSet,
     AlbumViewSet,
-    MediatypeViewSet,
+    ArtistViewSet,
     GenreViewSet,
+    MediatypeViewSet,
     TrackViewSet,
 )
 from music.viewsets.tables import TrackTableViewSet
+from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register("artists", ArtistViewSet)

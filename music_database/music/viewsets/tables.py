@@ -1,11 +1,9 @@
-from rest_framework import viewsets
-from rest_framework import filters
-
 import django_filters
+from rest_framework import filters, viewsets
 
-from .filters import TrackTableFilter
 from ..models import Track
 from ..serializers import TrackTableSerializer
+from .filters import TrackTableFilter
 
 
 class TrackTableViewSet(viewsets.ReadOnlyModelViewSet):

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Artist, Album, Mediatype, Genre, Track
+from .models import Album, Artist, Genre, Mediatype, Track
 
 
 @admin.register(Artist)

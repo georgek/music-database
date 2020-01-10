@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Artist, Album, Mediatype, Genre, Track
+from .models import Album, Artist, Genre, Mediatype, Track
 
 
 class ArtistSerializer(serializers.HyperlinkedModelSerializer):
