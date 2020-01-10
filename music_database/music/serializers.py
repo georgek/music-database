@@ -1,12 +1,6 @@
 from rest_framework import serializers
 
-from .models import (
-    Artist,
-    Album,
-    Mediatype,
-    Genre,
-    Track,
-)
+from .models import Artist, Album, Mediatype, Genre, Track
 
 
 class ArtistSerializer(serializers.HyperlinkedModelSerializer):
@@ -30,11 +24,7 @@ class MediatypeSerializer(serializers.HyperlinkedModelSerializer):
 class GenreSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Genre
-        fields = [
-            "url",
-            "id",
-            "name",
-        ]
+        fields = ["url", "id", "name"]
 
 
 class TrackSerializer(serializers.HyperlinkedModelSerializer):
@@ -59,8 +49,6 @@ class TrackTableSerializer(serializers.ModelSerializer):
         ]
 
     album = serializers.StringRelatedField()
-    artist = serializers.StringRelatedField(
-        source="album.artist",
-    )
+    artist = serializers.StringRelatedField(source="album.artist")
     media_type = serializers.StringRelatedField()
     genre = serializers.StringRelatedField()

@@ -10,10 +10,7 @@ from ..serializers import TrackTableSerializer
 
 class TrackTableViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Track.objects.select_related(
-        "album",
-        "album__artist",
-        "media_type",
-        "genre",
+        "album", "album__artist", "media_type", "genre"
     )
     serializer_class = TrackTableSerializer
     filter_backends = [
@@ -28,9 +25,5 @@ class TrackTableViewSet(viewsets.ReadOnlyModelViewSet):
         "album__artist__name",
         "milliseconds",
     ]
-    search_fields = [
-        "name",
-        "album__title",
-        "album__artist__name",
-    ]
+    search_fields = ["name", "album__title", "album__artist__name"]
     filterset_class = TrackTableFilter

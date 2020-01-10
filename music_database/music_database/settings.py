@@ -80,9 +80,7 @@ WSGI_APPLICATION = "music_database.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-DATABASES = {
-    "default": dj_database_url.config(conn_max_age=0),
-}
+DATABASES = {"default": dj_database_url.config(conn_max_age=0)}
 
 
 # Password validation
@@ -119,7 +117,7 @@ STATIC_URL = "/static/"
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly",
+        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "DEFAULT_FILTER_BACKENDS": [
@@ -130,7 +128,4 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 100,
 }
 
-CORS_ORIGIN_WHITELIST = [
-    "http://localhost:3000",
-    "http://localhost:5000",
-]
+CORS_ORIGIN_WHITELIST = ["http://localhost:3000", "http://localhost:5000"]

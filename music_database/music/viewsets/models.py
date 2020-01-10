@@ -1,12 +1,6 @@
 from rest_framework import viewsets
 
-from ..models import (
-    Artist,
-    Album,
-    Mediatype,
-    Genre,
-    Track,
-)
+from ..models import Artist, Album, Mediatype, Genre, Track
 from ..serializers import (
     ArtistSerializer,
     AlbumSerializer,

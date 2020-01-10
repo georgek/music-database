@@ -2,12 +2,8 @@ from django.db import models
 
 
 class Artist(models.Model):
-    id = models.IntegerField(
-        db_column="ArtistId", primary_key=True
-    )
-    name = models.CharField(
-        db_column="Name", max_length=120
-    )
+    id = models.IntegerField(db_column="ArtistId", primary_key=True)
+    name = models.CharField(db_column="Name", max_length=120)
 
     class Meta:
         managed = False
@@ -18,15 +14,9 @@ class Artist(models.Model):
 
 
 class Album(models.Model):
-    id = models.IntegerField(
-        db_column="AlbumId", primary_key=True
-    )
-    title = models.CharField(
-        db_column="Title", max_length=160
-    )
-    artist = models.ForeignKey(
-        Artist, on_delete=models.CASCADE, db_column="ArtistId"
-    )
+    id = models.IntegerField(db_column="AlbumId", primary_key=True)
+    title = models.CharField(db_column="Title", max_length=160)
+    artist = models.ForeignKey(Artist, on_delete=models.CASCADE, db_column="ArtistId")
 
     class Meta:
         managed = False
@@ -37,12 +27,8 @@ class Album(models.Model):
 
 
 class Mediatype(models.Model):
-    id = models.IntegerField(
-        db_column="MediaTypeId", primary_key=True
-    )
-    name = models.CharField(
-        db_column="Name", max_length=120
-    )
+    id = models.IntegerField(db_column="MediaTypeId", primary_key=True)
+    name = models.CharField(db_column="Name", max_length=120)
 
     class Meta:
         managed = False
@@ -53,12 +39,8 @@ class Mediatype(models.Model):
 
 
 class Genre(models.Model):
-    id = models.IntegerField(
-        db_column="GenreId", primary_key=True
-    )
-    name = models.CharField(
-        db_column="Name", max_length=120
-    )
+    id = models.IntegerField(db_column="GenreId", primary_key=True)
+    name = models.CharField(db_column="Name", max_length=120)
 
     class Meta:
         managed = False
@@ -69,30 +51,18 @@ class Genre(models.Model):
 
 
 class Track(models.Model):
-    id = models.IntegerField(
-        db_column="TrackId", primary_key=True
-    )
-    name = models.CharField(
-        db_column="Name", max_length=200
-    )
-    album = models.ForeignKey(
-        Album, on_delete=models.CASCADE, db_column="AlbumId"
-    )
+    id = models.IntegerField(db_column="TrackId", primary_key=True)
+    name = models.CharField(db_column="Name", max_length=200)
+    album = models.ForeignKey(Album, on_delete=models.CASCADE, db_column="AlbumId")
     media_type = models.ForeignKey(
         Mediatype, on_delete=models.CASCADE, db_column="MediaTypeId"
     )
-    genre = models.ForeignKey(
-        Genre, on_delete=models.CASCADE, db_column="GenreId"
-    )
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE, db_column="GenreId")
     composer = models.CharField(
         db_column="Composer", max_length=220, blank=True, null=True
     )
-    milliseconds = models.IntegerField(
-        db_column="Milliseconds"
-    )
-    bytes = models.IntegerField(
-        db_column="Bytes", blank=True, null=True
-    )
+    milliseconds = models.IntegerField(db_column="Milliseconds")
+    bytes = models.IntegerField(db_column="Bytes", blank=True, null=True)
     unitprice = models.DecimalField(
         db_column="UnitPrice", max_digits=10, decimal_places=2
     )

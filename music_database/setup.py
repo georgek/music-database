@@ -16,8 +16,6 @@ setup(
         "django-filter",
         "django-cors-headers",
     ],
-    extras_require={
-        "psycopg": ["psycopg2"],
-    },
+    extras_require={"psycopg": ["psycopg2"]},
     scripts=["manage.py"],
 )
