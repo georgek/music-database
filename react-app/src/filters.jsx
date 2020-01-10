@@ -24,12 +24,14 @@ function SearchBox(props) {
           ref={input}
           name={props.name}
           value={props.value}
-          onChange={(e) => props.onChange(e.target.value)}
+          onChange={e => props.onChange(e.target.value)}
           placeholder={props.placeholder}
           aria-label={props.label}
           aria-describedby="basic-addon2"
         />
-        <Button variant="danger" onClick={props.onRemove}>Remove</Button>
+        <Button variant="danger" onClick={props.onRemove}>
+          Remove
+        </Button>
       </InputGroup>
     </Form.Group>
   );
@@ -52,19 +54,20 @@ function ChoiceBox(props) {
           as="select"
           name={props.name}
           value={props.value}
-          onChange={(e) => props.onChange(e.target.value)}
+          onChange={e => props.onChange(e.target.value)}
           aria-label={props.label}
           aria-describedby="basic-addon2"
         >
           <option value="">(All)</option>
-          {choices.map(
-            (choice) => (
-              <option key={choice.id} value={choice.id}>
-                {choice.name}
-              </option>
-            ))}
+          {choices.map(choice => (
+            <option key={choice.id} value={choice.id}>
+              {choice.name}
+            </option>
+          ))}
         </FormControl>
-        <Button variant="danger" onClick={props.onRemove}>Remove</Button>
+        <Button variant="danger" onClick={props.onRemove}>
+          Remove
+        </Button>
       </InputGroup>
     </Form.Group>
   );
@@ -77,9 +80,10 @@ export default class FilterSet extends React.Component {
     // this stores the original order of the filters
     this.filterKeys = props.availableFilters.map(filter => filter.key);
 
-    const allFilters = props.availableFilters.map(
-      filter => [filter.key, Object.assign({active: false}, filter)]
-    );
+    const allFilters = props.availableFilters.map(filter => [
+      filter.key,
+      Object.assign({ active: false }, filter),
+    ]);
 
     this.state = {
       filters: Object.fromEntries(allFilters),
@@ -137,10 +141,9 @@ export default class FilterSet extends React.Component {
       <Card body>
         <Card.Title>Filters</Card.Title>
         <Form>
-          {this.state.activeFilters.map(
-            (key, index) => {
-              let filter = this.state.filters[key];
-              switch (filter.type) {
+          {this.state.activeFilters.map((key, index) => {
+            let filter = this.state.filters[key];
+            switch (filter.type) {
               case "search":
                 return (
                   <SearchBox
@@ -149,8 +152,8 @@ export default class FilterSet extends React.Component {
                     label={filter.name}
                     value={this.state.currentFilters[filter.key]}
                     placeholder={`Filter on ${filter.name}`}
-                    onChange={
-                      (value) => this.handleFiltersChange(filter.key, value)
+                    onChange={value =>
+                      this.handleFiltersChange(filter.key, value)
                     }
                     onRemove={() => this.handleRemoveFilter(index)}
                   />
@@ -163,39 +166,34 @@ export default class FilterSet extends React.Component {
                     label={filter.name}
                     choicesUrl={filter.choicesUrl}
                     value={this.state.currentFilters[filter.key]}
-                    onChange={
-                      (value) => this.handleFiltersChange(filter.key, value)
+                    onChange={value =>
+                      this.handleFiltersChange(filter.key, value)
                     }
                     onRemove={() => this.handleRemoveFilter(index)}
                   />
                 );
               default:
                 return null;
-              }
             }
-          )}
+          })}
         </Form>
-        {this.filterKeys.length > this.state.activeFilters.length &&
-         <Dropdown onSelect={key => this.handleAddFilter(key)}>
-           <Dropdown.Toggle variant="primary" id="addFilterDropdown">
-             Add filter
-           </Dropdown.Toggle>
-           <Dropdown.Menu>
-             {this.filterKeys.map(
-               key => this.state.filters[key]
-             ).filter(
-               filter => !filter.active
-             ).map(
-               filter => (
-                   <Dropdown.Item
-                     key={filter.key}
-                     eventKey={filter.key}
-                   >
-                     {filter.name}
-                   </Dropdown.Item>
-               ))}
-           </Dropdown.Menu>
-         </Dropdown>}
+        {this.filterKeys.length > this.state.activeFilters.length && (
+          <Dropdown onSelect={key => this.handleAddFilter(key)}>
+            <Dropdown.Toggle variant="primary" id="addFilterDropdown">
+              Add filter
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              {this.filterKeys
+                .map(key => this.state.filters[key])
+                .filter(filter => !filter.active)
+                .map(filter => (
+                  <Dropdown.Item key={filter.key} eventKey={filter.key}>
+                    {filter.name}
+                  </Dropdown.Item>
+                ))}
+            </Dropdown.Menu>
+          </Dropdown>
+        )}
       </Card>
     );
   }

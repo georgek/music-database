@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Pagination from "react-js-pagination";
 
 import { useQueryParam, NumberParam, StringParam } from "use-query-params";
-import { encodeObject } from 'serialize-query-params';
+import { encodeObject } from "serialize-query-params";
 
 import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
@@ -14,12 +14,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
 
 function buildQuery(object) {
-  const items = Object.keys(object).filter(
-    key => object[key]
-  ).map(
-    (key) =>
-      `${key}=${encodeURIComponent(object[key])}`
-  );
+  const items = Object.keys(object)
+    .filter(key => object[key])
+    .map(key => `${key}=${encodeURIComponent(object[key])}`);
   return items.join("&");
 }
 
@@ -37,39 +34,31 @@ function TableHeaderItem(props) {
     <th scope="col">
       {props.sortKey ? (
         <button
-          className="btn btn-link thead" href="#"
-          onClick={
-            (e) => {
-              e.preventDefault();
-              props.onClick(newSortKey);
-            }}
+          className="btn btn-link thead"
+          href="#"
+          onClick={e => {
+            e.preventDefault();
+            props.onClick(newSortKey);
+          }}
         >
           {label}
         </button>
-      ) : label}
+      ) : (
+        label
+      )}
     </th>
   );
 }
 
 function TableItem(props) {
-  const value = props.render
-        ? props.render(props.value)
-        : props.value;
+  const value = props.render ? props.render(props.value) : props.value;
   if (props.schemaKey === "id") {
-    return (
-      <th scope="row">{value}</th>
-    );
+    return <th scope="row">{value}</th>;
   }
-  return (
-    <td>{value}</td>
-  );
+  return <td>{value}</td>;
 }
 
-function decodeObject(
-  input,
-  keyValSeparator = '-',
-  entrySeparator = '_'
-) {
+function decodeObject(input, keyValSeparator = "-", entrySeparator = "_") {
   if (input == null) {
     return undefined;
   }
@@ -106,7 +95,8 @@ export default function DataTable(props) {
   const [currentPage, setCurrentPage] = useQueryParam("page", NumberParam);
   const [sortKey, setSortKey] = useQueryParam("sort", StringParam);
   const [filters, setFilters] = useQueryParam(
-    "filter", ObjectWithEmptyStringsParam
+    "filter",
+    ObjectWithEmptyStringsParam
   );
   console.log(filters);
 
@@ -115,7 +105,7 @@ export default function DataTable(props) {
       setLoading(true);
       let query = {
         limit: recordsPerPage,
-        offset:(currentPage - 1) * recordsPerPage,
+        offset: (currentPage - 1) * recordsPerPage,
         ordering: sortKey,
       };
       query = Object.assign(query, filters);
@@ -133,9 +123,7 @@ export default function DataTable(props) {
   }, [props.recordsUrl, currentPage, sortKey, filters]);
 
   useEffect(() => {
-    const totalPages = Math.ceil(
-      totalRecords / recordsPerPage
-    );
+    const totalPages = Math.ceil(totalRecords / recordsPerPage);
     if (totalPages === 0) {
       setCurrentPage(1, "PushIn");
     } else if (currentPage > totalPages) {
@@ -180,44 +168,36 @@ export default function DataTable(props) {
         onRemoveFilter={handleRemoveFilter}
       />
       <Card body>
-        Showing {currentRecords.length} of
-        {" "}{totalRecords} records.
+        Showing {currentRecords.length} of {totalRecords} records.
       </Card>
-      <Table
-        striped
-        hover
-        className={loading && "loading"}
-      >
+      <Table striped hover className={loading && "loading"}>
         <thead>
           <tr>
-            {props.schema.map(
-              (item) => (
-                <TableHeaderItem
-                  key={item.sortKey}
-                  name={item.name}
-                  sortKey={item.sortKey}
-                  sortedAsc={sortKey === item.sortKey}
-                  sortedDesc={sortKey === "-" + item.sortKey}
-                  onClick={handleSortChange}
-                />
-              ))}
+            {props.schema.map(item => (
+              <TableHeaderItem
+                key={item.sortKey}
+                name={item.name}
+                sortKey={item.sortKey}
+                sortedAsc={sortKey === item.sortKey}
+                sortedDesc={sortKey === "-" + item.sortKey}
+                onClick={handleSortChange}
+              />
+            ))}
           </tr>
         </thead>
         <tbody>
-          {currentRecords.map(
-            (record) => (
-              <tr key={record.id}>
-                {props.schema.map(
-                  (item) => (
-                    <TableItem
-                      key={item.key}
-                      schemaKey={item.key}
-                      value={record[item.key]}
-                      render={item.render}
-                    />
-                  ))}
-              </tr>
-            ))}
+          {currentRecords.map(record => (
+            <tr key={record.id}>
+              {props.schema.map(item => (
+                <TableItem
+                  key={item.key}
+                  schemaKey={item.key}
+                  value={record[item.key]}
+                  render={item.render}
+                />
+              ))}
+            </tr>
+          ))}
         </tbody>
       </Table>
       <nav aria-label="Table pagination">

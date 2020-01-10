@@ -2,7 +2,7 @@ import React from "react";
 
 import Pagination from "react-js-pagination";
 
-import AwesomeDebouncePromise from 'awesome-debounce-promise';
+import AwesomeDebouncePromise from "awesome-debounce-promise";
 
 import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
@@ -14,8 +14,7 @@ import "./index.css";
 
 function buildQuery(object) {
   const items = Object.keys(object).map(
-    (key) =>
-      `${key}=${encodeURIComponent(object[key])}`
+    key => `${key}=${encodeURIComponent(object[key])}`
   );
   return items.join("&");
 }
@@ -34,32 +33,28 @@ function TableHeaderItem(props) {
     <th scope="col">
       {props.sortKey ? (
         <button
-          className="btn btn-link thead" href="#"
-          onClick={
-            (e) => {
-              e.preventDefault();
-              props.onClick(newSortKey);
-            }}
+          className="btn btn-link thead"
+          href="#"
+          onClick={e => {
+            e.preventDefault();
+            props.onClick(newSortKey);
+          }}
         >
           {label}
         </button>
-      ) : label}
+      ) : (
+        label
+      )}
     </th>
   );
 }
 
 function TableItem(props) {
-  const value = props.render
-        ? props.render(props.value)
-        : props.value;
+  const value = props.render ? props.render(props.value) : props.value;
   if (props.schemaKey === "id") {
-    return (
-      <th scope="row">{value}</th>
-    );
+    return <th scope="row">{value}</th>;
   }
-  return (
-    <td>{value}</td>
-  );
+  return <td>{value}</td>;
 }
 
 export default class DataTable extends React.Component {
@@ -97,9 +92,9 @@ export default class DataTable extends React.Component {
 
   fetchDebounced = AwesomeDebouncePromise(this.fetch, 300);
 
-  async updateState(updatedState, instant=false) {
+  async updateState(updatedState, instant = false) {
     this.setState(updatedState);
-    this.setState({loading: true});
+    this.setState({ loading: true });
     let newState = Object.assign({}, this.state);
     newState = Object.assign(newState, updatedState);
     const fetchFun = instant ? this.fetch : this.fetchDebounced;
@@ -108,7 +103,7 @@ export default class DataTable extends React.Component {
       this.recordsPerPage,
       newState.currentOffset,
       newState.sortKey,
-      newState.filters,
+      newState.filters
     );
     const data = await response.json();
     this.setState({
@@ -124,14 +119,16 @@ export default class DataTable extends React.Component {
       this.recordsPerPage,
       this.state.currentOffset,
       this.state.sortKey,
-      this.state.filters,
+      this.state.filters
     )
       .then(response => response.json())
-      .then(data => this.setState({
-        currentRecords: data.results,
-        totalRecords: data.count,
-        loading: false,
-      }));
+      .then(data =>
+        this.setState({
+          currentRecords: data.results,
+          totalRecords: data.count,
+          loading: false,
+        })
+      );
   }
 
   componentDidUpdate() {
@@ -145,9 +142,7 @@ export default class DataTable extends React.Component {
   }
 
   handlePageChange(page) {
-    const totalPages = Math.ceil(
-      this.state.totalRecords / this.recordsPerPage
-    );
+    const totalPages = Math.ceil(this.state.totalRecords / this.recordsPerPage);
     if (totalPages === 0) {
       page = 1;
     } else if (page < 1) {
@@ -167,7 +162,7 @@ export default class DataTable extends React.Component {
         currentPage: page,
         currentOffset: offset,
       },
-      true,
+      true
     );
   }
 
@@ -176,7 +171,7 @@ export default class DataTable extends React.Component {
       {
         sortKey: sortKey,
       },
-      true,
+      true
     );
   }
 
@@ -194,44 +189,37 @@ export default class DataTable extends React.Component {
           onFiltersChange={this.handleFiltersChange}
         />
         <Card body>
-          Showing {this.state.currentRecords.length} of
-          {" "}{this.state.totalRecords} records.
+          Showing {this.state.currentRecords.length} of{" "}
+          {this.state.totalRecords} records.
         </Card>
-        <Table
-          striped
-          hover
-          className={this.state.loading && "loading"}
-        >
+        <Table striped hover className={this.state.loading && "loading"}>
           <thead>
             <tr>
-              {this.props.schema.map(
-                (item) => (
-                  <TableHeaderItem
-                    key={item.sortKey}
-                    name={item.name}
-                    sortKey={item.sortKey}
-                    sortedAsc={this.state.sortKey === item.sortKey}
-                    sortedDesc={this.state.sortKey === "-" + item.sortKey}
-                    onClick={this.handleSortChange}
-                  />
-                ))}
+              {this.props.schema.map(item => (
+                <TableHeaderItem
+                  key={item.sortKey}
+                  name={item.name}
+                  sortKey={item.sortKey}
+                  sortedAsc={this.state.sortKey === item.sortKey}
+                  sortedDesc={this.state.sortKey === "-" + item.sortKey}
+                  onClick={this.handleSortChange}
+                />
+              ))}
             </tr>
           </thead>
           <tbody>
-            {this.state.currentRecords.map(
-              (record) => (
-                <tr key={record.id}>
-                  {this.props.schema.map(
-                    (item) => (
-                      <TableItem
-                        key={item.key}
-                        schemaKey={item.key}
-                        value={record[item.key]}
-                        render={item.render}
-                      />
-                    ))}
-                </tr>
-              ))}
+            {this.state.currentRecords.map(record => (
+              <tr key={record.id}>
+                {this.props.schema.map(item => (
+                  <TableItem
+                    key={item.key}
+                    schemaKey={item.key}
+                    value={record[item.key]}
+                    render={item.render}
+                  />
+                ))}
+              </tr>
+            ))}
           </tbody>
         </Table>
         <nav aria-label="Table pagination">
