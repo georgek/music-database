@@ -3,3 +3,6 @@
 __pycache__
 .tox
 /Chinook_Sqlite.sqlite
+
+node_modules/
+.cache/

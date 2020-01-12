@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "django_filters",
     "music_database.music",
+    "music_database.frontend",
 ]
 
 MIDDLEWARE = [
