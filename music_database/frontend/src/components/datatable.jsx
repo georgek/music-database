@@ -2,7 +2,12 @@ import React, { useEffect, useState } from "react";
 
 import Pagination from "react-js-pagination";
 
-import { useQueryParam, NumberParam, StringParam } from "use-query-params";
+import {
+  useQueryParam,
+  NumberParam,
+  ObjectParam,
+  StringParam,
+} from "use-query-params";
 import { encodeObject } from "serialize-query-params";
 
 import Card from "react-bootstrap/Card";
@@ -55,33 +60,6 @@ function TableItem(props) {
   return <td>{value}</td>;
 }
 
-function decodeObject(input, keyValSeparator = "-", entrySeparator = "_") {
-  if (input == null) {
-    return undefined;
-  }
-
-  const objStr = input instanceof Array ? input[0] : input;
-
-  if (!objStr || !objStr.length) {
-    return undefined;
-  }
-
-  const obj = {};
-
-  const keyValSeparatorRegExp = new RegExp(`${keyValSeparator}(.*)`);
-  objStr.split(entrySeparator).forEach(entryStr => {
-    const [key, value] = entryStr.split(keyValSeparatorRegExp);
-    obj[key] = value;
-  });
-
-  return obj;
-}
-
-const ObjectWithEmptyStringsParam = {
-  encode: encodeObject,
-  decode: decodeObject,
-};
-
 export default function DataTable(props) {
   const recordsPerPage = 10;
 
@@ -91,10 +69,7 @@ export default function DataTable(props) {
 
   const [currentPage, setCurrentPage] = useQueryParam("page", NumberParam);
   const [sortKey, setSortKey] = useQueryParam("sort", StringParam);
-  const [filters, setFilters] = useQueryParam(
-    "filter",
-    ObjectWithEmptyStringsParam
-  );
+  const [filters, setFilters] = useQueryParam("filter", ObjectParam);
 
   useEffect(() => {
     async function fetchData() {
