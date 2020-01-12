@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import Pagination from "react-js-pagination";
 
-import AwesomeDebouncePromise from "awesome-debounce-promise";
+import { useQueryParam, NumberParam, StringParam } from "use-query-params";
+import { encodeObject } from "serialize-query-params";
 
 import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
@@ -13,9 +14,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
 
 function buildQuery(object) {
-  const items = Object.keys(object).map(
-    key => `${key}=${encodeURIComponent(object[key])}`
-  );
+  const items = Object.keys(object)
+    .filter(key => object[key])
+    .map(key => `${key}=${encodeURIComponent(object[key])}`);
   return items.join("&");
 }
 
@@ -57,188 +58,164 @@ function TableItem(props) {
   return <td>{value}</td>;
 }
 
-export default class DataTable extends React.Component {
-  constructor(props) {
-    super(props);
-    this.recordsPerPage = 10;
-
-    this.state = {
-      currentRecords: [],
-      currentPage: 1,
-      currentOffset: 0,
-      totalRecords: 0,
-      sortKey: "",
-      filters: {},
-      loading: true,
-    };
-
-    this.fetch = this.fetch.bind(this);
-    this.handlePageChange = this.handlePageChange.bind(this);
-    this.handleSortChange = this.handleSortChange.bind(this);
-    this.handleFiltersChange = this.handleFiltersChange.bind(this);
+function decodeObject(input, keyValSeparator = "-", entrySeparator = "_") {
+  if (input == null) {
+    return undefined;
   }
 
-  fetch(url, limit, offset, sortKey, filters) {
-    let query = {
-      limit: limit,
-      offset: offset,
-      ordering: sortKey,
-    };
-    query = Object.assign(query, filters);
-    const queryString = buildQuery(query);
-    const fullUrl = `${url}?${queryString}`;
-    return fetch(fullUrl);
+  const objStr = input instanceof Array ? input[0] : input;
+
+  if (!objStr || !objStr.length) {
+    return undefined;
   }
 
-  fetchDebounced = AwesomeDebouncePromise(this.fetch, 300);
+  const obj = {};
 
-  async updateState(updatedState, instant = false) {
-    this.setState(updatedState);
-    this.setState({ loading: true });
-    let newState = Object.assign({}, this.state);
-    newState = Object.assign(newState, updatedState);
-    const fetchFun = instant ? this.fetch : this.fetchDebounced;
-    const response = await fetchFun(
-      this.props.recordsUrl,
-      this.recordsPerPage,
-      newState.currentOffset,
-      newState.sortKey,
-      newState.filters
-    );
-    const data = await response.json();
-    this.setState({
-      currentRecords: data.results,
-      totalRecords: data.count,
-      loading: false,
-    });
-  }
+  const keyValSeparatorRegExp = new RegExp(`${keyValSeparator}(.*)`);
+  objStr.split(entrySeparator).forEach(entryStr => {
+    const [key, value] = entryStr.split(keyValSeparatorRegExp);
+    obj[key] = value;
+  });
 
-  componentDidMount() {
-    this.fetch(
-      this.props.recordsUrl,
-      this.recordsPerPage,
-      this.state.currentOffset,
-      this.state.sortKey,
-      this.state.filters
-    )
-      .then(response => response.json())
-      .then(data =>
-        this.setState({
-          currentRecords: data.results,
-          totalRecords: data.count,
-          loading: false,
-        })
-      );
-  }
+  return obj;
+}
 
-  componentDidUpdate() {
-    // change page in case the current page is no longer valid after the
-    // filters changed (ie. there are fewer records now than there were)
-    this.handlePageChange(this.state.currentPage);
-  }
+const ObjectWithEmptyStringsParam = {
+  encode: encodeObject,
+  decode: decodeObject,
+};
 
-  componentWillUnmount() {
-    this.setState = () => {};
-  }
+export default function DataTable(props) {
+  const recordsPerPage = 10;
 
-  handlePageChange(page) {
-    const totalPages = Math.ceil(this.state.totalRecords / this.recordsPerPage);
+  const [currentRecords, setCurrentRecords] = useState([]);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  const [currentPage, setCurrentPage] = useQueryParam("page", NumberParam);
+  const [sortKey, setSortKey] = useQueryParam("sort", StringParam);
+  const [filters, setFilters] = useQueryParam(
+    "filter",
+    ObjectWithEmptyStringsParam
+  );
+  console.log(filters);
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      let query = {
+        limit: recordsPerPage,
+        offset: (currentPage - 1) * recordsPerPage,
+        ordering: sortKey,
+      };
+      query = Object.assign(query, filters);
+      const queryString = buildQuery(query);
+      const fullUrl = `${props.recordsUrl}?${queryString}`;
+      const response = await fetch(fullUrl);
+      if (response.status === 200) {
+        const data = await response.json();
+        setCurrentRecords(data.results);
+        setTotalRecords(data.count);
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, [props.recordsUrl, currentPage, sortKey, filters]);
+
+  useEffect(() => {
+    const totalPages = Math.ceil(totalRecords / recordsPerPage);
     if (totalPages === 0) {
-      page = 1;
-    } else if (page < 1) {
-      page = 1;
-    } else if (page > totalPages) {
-      page = totalPages;
+      setCurrentPage(1, "PushIn");
+    } else if (currentPage > totalPages) {
+      setCurrentPage(totalPages, "replaceIn");
     }
+  }, [currentPage, setCurrentPage, totalRecords]);
 
-    if (page === this.state.currentPage) {
-      return;
+  function handleSortChange(sortKey) {
+    setSortKey(sortKey, "pushIn");
+  }
+
+  function handlePageChange(page) {
+    if (page < 1) {
+      page = 1;
     }
-
-    const offset = (page - 1) * this.recordsPerPage;
-
-    this.updateState(
-      {
-        currentPage: page,
-        currentOffset: offset,
-      },
-      true
-    );
+    setCurrentPage(page, "pushIn");
   }
 
-  handleSortChange(sortKey) {
-    this.updateState(
-      {
-        sortKey: sortKey,
-      },
-      true
-    );
+  function handleFiltersChange(filters) {
+    setFilters(filters, "replaceIn");
   }
 
-  handleFiltersChange(filters) {
-    this.updateState({
-      filters: filters,
-    });
+  function handleAddFilter(filterKey) {
+    const newFilters = Object.assign({}, filters);
+    newFilters[filterKey] = "";
+    setFilters(newFilters, "pushIn");
   }
 
-  render() {
-    return (
-      <>
-        <FilterSet
-          filters={this.props.filters}
-          onFiltersChange={this.handleFiltersChange}
-        />
-        <Card body>
-          Showing {this.state.currentRecords.length} of{" "}
-          {this.state.totalRecords} records.
-        </Card>
-        <Table striped hover className={this.state.loading && "loading"}>
-          <thead>
-            <tr>
-              {this.props.schema.map(item => (
-                <TableHeaderItem
-                  key={item.sortKey}
-                  name={item.name}
-                  sortKey={item.sortKey}
-                  sortedAsc={this.state.sortKey === item.sortKey}
-                  sortedDesc={this.state.sortKey === "-" + item.sortKey}
-                  onClick={this.handleSortChange}
+  function handleRemoveFilter(filterKey) {
+    const newFilters = Object.assign({}, filters);
+    delete newFilters[filterKey];
+    setFilters(newFilters, "pushIn");
+  }
+
+  return (
+    <>
+      <FilterSet
+        availableFilters={props.availableFilters}
+        activeFilters={filters}
+        onFiltersChange={handleFiltersChange}
+        onAddFilter={handleAddFilter}
+        onRemoveFilter={handleRemoveFilter}
+      />
+      <Card body>
+        Showing {currentRecords.length} of {totalRecords} records.
+      </Card>
+      <Table striped hover className={loading && "loading"}>
+        <thead>
+          <tr>
+            {props.schema.map(item => (
+              <TableHeaderItem
+                key={item.sortKey}
+                name={item.name}
+                sortKey={item.sortKey}
+                sortedAsc={sortKey === item.sortKey}
+                sortedDesc={sortKey === "-" + item.sortKey}
+                onClick={handleSortChange}
+              />
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {currentRecords.map(record => (
+            <tr key={record.id}>
+              {props.schema.map(item => (
+                <TableItem
+                  key={item.key}
+                  schemaKey={item.key}
+                  value={record[item.key]}
+                  render={item.render}
                 />
               ))}
             </tr>
-          </thead>
-          <tbody>
-            {this.state.currentRecords.map(record => (
-              <tr key={record.id}>
-                {this.props.schema.map(item => (
-                  <TableItem
-                    key={item.key}
-                    schemaKey={item.key}
-                    value={record[item.key]}
-                    render={item.render}
-                  />
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-        <nav aria-label="Table pagination">
-          <Pagination
-            onChange={this.handlePageChange}
-            activePage={this.state.currentPage}
-            itemsCountPerPage={this.recordsPerPage}
-            totalItemsCount={this.state.totalRecords}
-            pageRangeDisplayed="5"
-            innerClass="pagination justify-content-center"
-            itemClass="page-item"
-            linkClass="page-link"
-            activeClass="active"
-            disabledClass="disabled"
-            prevPageText="‹"
-            nextPageText="›"
-          />
-        </nav>
-      </>
-    );
-  }
+          ))}
+        </tbody>
+      </Table>
+      <nav aria-label="Table pagination">
+        <Pagination
+          onChange={handlePageChange}
+          activePage={currentPage}
+          itemsCountPerPage={recordsPerPage}
+          totalItemsCount={totalRecords}
+          pageRangeDisplayed="5"
+          innerClass="pagination justify-content-center"
+          itemClass="page-item"
+          linkClass="page-link"
+          activeClass="active"
+          disabledClass="disabled"
+          prevPageText="‹"
+          nextPageText="›"
+        />
+      </nav>
+    </>
+  );
 }

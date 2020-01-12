@@ -7,7 +7,7 @@ import { QueryParamProvider } from "use-query-params";
 
 import Container from "react-bootstrap/Container";
 
-import DataTable from "./newdatatable.jsx";
+import DataTable from "./datatable.jsx";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
