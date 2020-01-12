@@ -4,7 +4,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="music-database",
-    use_scm_version={"root": "..", "relative_to": __file__},
+    use_scm_version=True,
     packages=find_packages(),
     python_requires=">=3.6",
     setup_requires=["setuptools_scm"],

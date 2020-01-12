@@ -1,9 +1,9 @@
 import django_filters
 from rest_framework import filters, viewsets
 
-from ..models import Track
-from ..serializers import TrackTableSerializer
-from .filters import TrackTableFilter
+from music_database.music.filters import TrackTableFilter
+from music_database.music.models import Track
+from music_database.music.serializers import TrackTableSerializer
 
 
 class TrackTableViewSet(viewsets.ReadOnlyModelViewSet):
