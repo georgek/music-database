@@ -26,5 +26,17 @@ services:
     ports:
       - 8000:8000
 
+  parcel:
+    image: "node:13"
+    user: "${UID}"
+    working_dir: /home/node/app
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./:/home/node/app
+    ports:
+      - 34589:34589
+    command: "npm run dev"
+
 volumes:
   pgdata:

@@ -4,7 +4,7 @@
   "description": "Doing some front end stuff with a music database.",
   "main": "index.js",
   "scripts": {
-    "dev": "parcel watch --out-dir music_database/frontend/static/frontend --public-url /static/frontend/ music_database/frontend/src/index.js",
+    "dev": "parcel watch --hmr-port 34589 --out-dir music_database/frontend/static/frontend --public-url /static/frontend/ music_database/frontend/src/index.js",
     "build": "parcel build --out-dir music_database/frontend/static/frontend --public-url /static/frontend/ music_database/frontend/src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
