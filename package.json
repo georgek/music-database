@@ -36,5 +36,17 @@
     "react-router-dom": "^5.1.2",
     "serialize-query-params": "^0.3.0",
     "use-query-params": "^0.6.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
