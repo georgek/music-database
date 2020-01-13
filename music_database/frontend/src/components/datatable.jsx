@@ -61,7 +61,7 @@ function TableItem(props) {
 }
 
 export default function DataTable(props) {
-  const recordsPerPage = 10;
+  const recordsPerPage = 20;
 
   const [currentRecords, setCurrentRecords] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -141,7 +141,7 @@ export default function DataTable(props) {
       <Card body>
         Showing {currentRecords.length} of {totalRecords} records.
       </Card>
-      <Table striped hover className={loading && "loading"}>
+      <Table striped hover size="sm" className={loading && "loading"}>
         <thead>
           <tr>
             {props.schema.map(item => (
