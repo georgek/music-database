@@ -8,7 +8,6 @@ import {
   ObjectParam,
   StringParam,
 } from "use-query-params";
-import { encodeObject } from "serialize-query-params";
 
 import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";

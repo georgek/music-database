@@ -18,3 +18,22 @@ repos:
     rev: 1.19.1
     hooks:
       - id: prettier
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v6.8.0
+    hooks:
+      - id: eslint
+        types: [file]
+        files: \.(js|jsx)$
+        args:
+          - "--max-warnings=0"
+        additional_dependencies:
+          - "eslint@6.x"
+          - "eslint-config-react-app"
+          - "@typescript-eslint/eslint-plugin@2.x"
+          - "@typescript-eslint/parser@2.x"
+          - "babel-eslint@10.x"
+          - "eslint-plugin-flowtype@3.x"
+          - "eslint-plugin-import@2.x"
+          - "eslint-plugin-jsx-a11y@6.x"
+          - "eslint-plugin-react@7.x"
+          - "eslint-plugin-react-hooks@1.x"

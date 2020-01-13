@@ -24,6 +24,16 @@
     "@babel/plugin-transform-runtime": "^7.8.0",
     "@babel/preset-env": "^7.8.0",
     "@babel/preset-react": "^7.8.0",
+    "@typescript-eslint/eslint-plugin": "^2.16.0",
+    "@typescript-eslint/parser": "^2.16.0",
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.8.0",
+    "eslint-config-react-app": "^5.1.0",
+    "eslint-plugin-flowtype": "^3.13.0",
+    "eslint-plugin-import": "^2.20.0",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.17.0",
+    "eslint-plugin-react-hooks": "^1.7.0",
     "parcel-bundler": "^1.12.4"
   },
   "dependencies": {
@@ -48,5 +58,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "eslintConfig": {
+    "extends": "react-app"
   }
 }
