@@ -1,6 +1,6 @@
-react-app/
-*/.tox
+.cache/
 .eggs/
 music_database.egg-info/
 postgres/
 *.sqlite
+node_modules/
