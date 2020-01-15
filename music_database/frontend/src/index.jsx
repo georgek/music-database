@@ -7,7 +7,10 @@ import { QueryParamProvider } from "use-query-params";
 
 import Container from "react-bootstrap/Container";
 
-import DataTable from "./datatable.jsx";
+import DataTable from "./components/datatable.jsx";
+
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./index.css";
 
 function displayLength(milliseconds) {
   milliseconds = parseInt(milliseconds, 10);
