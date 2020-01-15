@@ -14,7 +14,6 @@ setup(
         "djangorestframework",
         "markdown",
         "django-filter",
-        "django-cors-headers",
     ],
     extras_require={"psycopg": ["psycopg2"]},
     scripts=["manage.py"],
