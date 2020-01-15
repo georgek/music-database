@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "parcel watch --hmr-port 34589 --out-dir music_database/frontend/static/frontend --public-url /static/frontend/ music_database/frontend/src/index.jsx",
-    "build": "parcel build --out-dir music_database/frontend/static/frontend --public-url /static/frontend/ music_database/frontend/src/index.jsx",
+    "build": "parcel build --out-dir dist/ --public-url /static/frontend/ music_database/frontend/src/index.jsx",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

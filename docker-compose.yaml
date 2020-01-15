@@ -17,6 +17,7 @@ services:
 
   django:
     build: .
+    image: music_database:${VERSION:-latest}
     depends_on:
       - db
     environment:

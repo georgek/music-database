@@ -7,4 +7,5 @@ RUN mkdir /code
 WORKDIR /code
 COPY . /code/
 RUN pip install -e .[psycopg]
+COPY dist/* /code/music_database/frontend/static/frontend/
 CMD ["manage.py", "runserver", "0.0.0.0:8000"]
