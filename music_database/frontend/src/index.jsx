@@ -12,6 +12,10 @@ import DataTable from "./components/datatable.jsx";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
 
+if (module.hot) {
+  module.hot.accept();
+}
+
 function displayLength(milliseconds) {
   milliseconds = parseInt(milliseconds, 10);
   const totalSeconds = milliseconds / 1000;
