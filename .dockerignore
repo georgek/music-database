@@ -4,3 +4,5 @@ music_database.egg-info/
 postgres/
 *.sqlite
 node_modules/
+Dockerfile
+.dockerignore

@@ -20,10 +20,15 @@ RUN pip install -e .[psycopg]
 
 FROM python:3.6-slim as python_runner
 ENV PYTHONUNBUFFERED 1
+RUN seq 1 8 | xargs -I{} mkdir -p /usr/share/man/man{}
+RUN apt-get update \
+        && apt-get install -y --no-install-recommends libpq5 \
+        && rm -rf /var/lib/apt/lists/*
 COPY --from=python_builder /opt/venv /opt/venv
 COPY --from=python_builder /code /code
 COPY --from=node_builder /home/node/app/dist/* /code/music_database/frontend/static/frontend/
 
 WORKDIR /code
 ENV PATH="/opt/venv/bin:$PATH"
+# ENV LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH"
 CMD ["manage.py", "runserver", "0.0.0.0:8000"]
