@@ -1,6 +1,7 @@
 FROM node:13 as node_builder
 WORKDIR /home/node/app
-COPY . /home/node/app
+COPY package.json package-lock.json .babelrc ./
+COPY ./music_database/frontend/src ./music_database/frontend/src
 RUN npm install
 RUN npm run build
 
