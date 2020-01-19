@@ -71,22 +71,48 @@ function ChoiceBox(props) {
 }
 
 export default function FilterSet(props) {
+  const [activeFilters, setActiveFilters] = useState(props.activeFilters);
+  const [timerId, setTimerId] = useState(null);
+
   const filters = Object.fromEntries(
     props.availableFilters.map(filter => [filter.key, filter])
   );
 
   function updateFilters(filterKey, value) {
-    const newFilters = Object.assign({}, props.activeFilters);
+    const newFilters = Object.assign({}, activeFilters);
     newFilters[filterKey] = value;
-    props.onFiltersChange(newFilters);
+    setActiveFilters(newFilters);
+    if (timerId) {
+      clearTimeout(timerId);
+    }
+    setTimerId(
+      setTimeout(() => {
+        props.onFiltersChange(newFilters);
+        setTimerId(null);
+      }, 200)
+    );
+  }
+
+  function addFilter(filterKey) {
+    const newFilters = Object.assign({}, activeFilters);
+    newFilters[filterKey] = "";
+    setActiveFilters(newFilters);
+    props.onAddFilter(filterKey);
+  }
+
+  function removeFilter(filterKey) {
+    const newFilters = Object.assign({}, activeFilters);
+    delete newFilters[filterKey];
+    setActiveFilters(newFilters);
+    props.onRemoveFilter(filterKey);
   }
 
   return (
     <Card body>
       <Card.Title>Filters</Card.Title>
       <Form>
-        {props.activeFilters &&
-          Object.keys(props.activeFilters).map(filterKey => {
+        {activeFilters &&
+          Object.keys(activeFilters).map(filterKey => {
             let filter = filters[filterKey];
             switch (filter.type) {
               case "search":
@@ -95,10 +121,10 @@ export default function FilterSet(props) {
                     key={filter.key}
                     name={filter.key}
                     label={filter.name}
-                    value={props.activeFilters[filter.key]}
+                    value={activeFilters[filter.key]}
                     placeholder={`Filter on ${filter.name}`}
                     onChange={value => updateFilters(filterKey, value)}
-                    onRemove={() => props.onRemoveFilter(filterKey)}
+                    onRemove={() => removeFilter(filterKey)}
                   />
                 );
               case "choice":
@@ -108,9 +134,9 @@ export default function FilterSet(props) {
                     name={filter.key}
                     label={filter.name}
                     choicesUrl={filter.choicesUrl}
-                    value={props.activeFilters[filter.key]}
+                    value={activeFilters[filter.key]}
                     onChange={value => updateFilters(filterKey, value)}
-                    onRemove={() => props.onRemoveFilter(filterKey)}
+                    onRemove={() => removeFilter(filterKey)}
                   />
                 );
               default:
@@ -118,13 +144,13 @@ export default function FilterSet(props) {
             }
           })}
       </Form>
-      <Dropdown onSelect={key => props.onAddFilter(key)}>
+      <Dropdown onSelect={key => addFilter(key)}>
         <Dropdown.Toggle variant="primary" id="addFilterDropdown">
           Add filter
         </Dropdown.Toggle>
         <Dropdown.Menu>
           {props.availableFilters.map(filter => {
-            if (props.activeFilters && filter.key in props.activeFilters) {
+            if (activeFilters && filter.key in activeFilters) {
               return null;
             } else {
               return (
