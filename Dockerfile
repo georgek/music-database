@@ -30,5 +30,4 @@ COPY --from=node_builder /home/node/app/dist/* /code/music_database/frontend/sta
 
 WORKDIR /code
 ENV PATH="/opt/venv/bin:$PATH"
-# ENV LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH"
 CMD ["manage.py", "runserver", "0.0.0.0:8000"]
