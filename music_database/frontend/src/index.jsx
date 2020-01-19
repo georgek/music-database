@@ -95,7 +95,7 @@ export default function App(props) {
       <DataTable
         schema={schema}
         availableFilters={filters}
-        recordsUrl="http://127.0.0.1:8000/tracks-table/"
+        recordsUrl="tracks-table/"
       />
     </Container>
   );
