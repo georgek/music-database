@@ -81,7 +81,7 @@ export default function App(props) {
       key: "genre",
       type: "choice",
       choices: [],
-      choicesUrl: "http://127.0.0.1:8000/genres/",
+      choicesUrl: "genres/",
     },
     {
       name: "All fields",
