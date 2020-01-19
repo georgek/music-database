@@ -6,3 +6,5 @@ postgres/
 node_modules/
 Dockerfile
 .dockerignore
+Makefile
+docker-compose.*

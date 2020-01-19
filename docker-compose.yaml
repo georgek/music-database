@@ -12,32 +12,13 @@ services:
     volumes:
       - ./postgres/docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d
       - pgdata:/var/lib/postgresql/data
-    ports:
-      - 5432:5432
 
   django:
-    build: .
     image: music_database:${VERSION:-latest}
     depends_on:
       - db
     environment:
       DATABASE_URL: postgres://music_user:music_password@db/Chinook
-    volumes:
-      - "./music_database:/code/music_database"
-    ports:
-      - 8000:8000
-
-  parcel:
-    image: "node:13"
-    user: "${UID}"
-    working_dir: /home/node/app
-    environment:
-      - NODE_ENV=development
-    volumes:
-      - ./:/home/node/app
-    ports:
-      - 34589:34589
-    command: "npm run dev"
 
 volumes:
   pgdata:

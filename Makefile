@@ -5,4 +5,10 @@ build:
 	docker build -t music_database:${VERSION} .
 
 up: build
-	env UID=${UID} VERSION=${VERSION} docker-compose up
+	env UID=${UID} VERSION=${VERSION} docker-compose up -d
+
+up-prod: build
+	env UID=${UID} VERSION=${VERSION} docker-compose \
+	   -f docker-compose.yaml \
+	   -f docker-compose.prod.yaml \
+	   up -d
