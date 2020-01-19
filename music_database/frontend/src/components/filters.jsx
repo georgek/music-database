@@ -74,6 +74,10 @@ export default function FilterSet(props) {
   const [activeFilters, setActiveFilters] = useState(props.activeFilters);
   const [timerId, setTimerId] = useState(null);
 
+  useEffect(() => {
+    setActiveFilters(props.activeFilters);
+  }, [props.activeFilters]);
+
   const filters = Object.fromEntries(
     props.availableFilters.map(filter => [filter.key, filter])
   );
