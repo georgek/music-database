@@ -14,9 +14,10 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 RUN mkdir /code
 WORKDIR /code
-COPY manage.py setup.cfg setup.py ./
+COPY manage.py setup.cfg setup.py requirements.txt ./
 COPY .git ./.git
 COPY music_database ./music_database
+RUN pip install -r requirements.txt
 RUN pip install -e .[psycopg]
 
 FROM python:3.6-slim as python_runner
