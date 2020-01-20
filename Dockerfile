@@ -6,7 +6,6 @@ RUN npm install
 RUN npm run build
 
 FROM python:3.6-slim as python_builder
-RUN seq 1 8 | xargs -I{} mkdir -p /usr/share/man/man{}
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git build-essential pkg-config libpq-dev
 
@@ -22,7 +21,6 @@ RUN pip install -e .[psycopg]
 
 FROM python:3.6-slim as python_runner
 ENV PYTHONUNBUFFERED 1
-RUN seq 1 8 | xargs -I{} mkdir -p /usr/share/man/man{}
 RUN apt-get update \
         && apt-get install -y --no-install-recommends libpq5 \
         && rm -rf /var/lib/apt/lists/*
