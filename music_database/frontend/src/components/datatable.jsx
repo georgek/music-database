@@ -62,6 +62,7 @@ function TableItem(props) {
 export default function DataTable(props) {
   const recordsPerPage = 20;
 
+  const [currentUrl, setCurrentUrl] = useState("");
   const [currentRecords, setCurrentRecords] = useState([]);
   const [totalRecords, setTotalRecords] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -71,17 +72,21 @@ export default function DataTable(props) {
   const [filters, setFilters] = useQueryParam("filter", ObjectParam);
 
   useEffect(() => {
+    let query = {
+      limit: recordsPerPage,
+      offset: (currentPage - 1) * recordsPerPage,
+      ordering: sortKey,
+    };
+    query = Object.assign(query, filters);
+    const queryString = buildQuery(query);
+    const fullUrl = `${props.recordsUrl}?${queryString}`;
+    setCurrentUrl(fullUrl);
+  }, [props.recordsUrl, currentPage, sortKey, filters]);
+
+  useEffect(() => {
     async function fetchData() {
       setLoading(true);
-      let query = {
-        limit: recordsPerPage,
-        offset: (currentPage - 1) * recordsPerPage,
-        ordering: sortKey,
-      };
-      query = Object.assign(query, filters);
-      const queryString = buildQuery(query);
-      const fullUrl = `${props.recordsUrl}?${queryString}`;
-      const response = await fetch(fullUrl);
+      const response = await fetch(currentUrl);
       if (response.status === 200) {
         const data = await response.json();
         setCurrentRecords(data.results);
@@ -90,7 +95,7 @@ export default function DataTable(props) {
       }
     }
     fetchData();
-  }, [props.recordsUrl, currentPage, sortKey, filters]);
+  }, [currentUrl]);
 
   useEffect(() => {
     const totalPages = Math.ceil(totalRecords / recordsPerPage);
