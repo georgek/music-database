@@ -41,8 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "django_filters",
-    "music_database.music",
-    "music_database.frontend",
+    "music_database.music.apps.MusicConfig",
+    "music_database.frontend.apps.FrontendConfig",
 ]
 
 MIDDLEWARE = [
