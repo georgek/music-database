@@ -2,7 +2,7 @@
   "name": "music-database",
   "version": "0.1.0",
   "description": "Doing some front end stuff with a music database.",
-  "main": "index.js",
+  "main": "music_database/frontend/src/index.jsx",
   "scripts": {
     "dev": "parcel watch --hmr-port 34589 --out-dir music_database/frontend/static/frontend --public-url /static/frontend/ music_database/frontend/src/index.jsx",
     "build": "parcel build --out-dir dist/ --public-url /static/frontend/ music_database/frontend/src/index.jsx",
