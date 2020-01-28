@@ -7,7 +7,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import Form from "react-bootstrap/Form";
 import FormControl from "react-bootstrap/FormControl";
 
-function SearchBox(props) {
+export function SearchBox(props) {
   const input = useRef(null);
   useEffect(() => {
     const timeoutID = setTimeout(() => input.current.focus(), 100);
@@ -34,7 +34,7 @@ function SearchBox(props) {
   );
 }
 
-function ChoiceBox(props) {
+export function ChoiceBox(props) {
   const [choices, setChoices] = useState([]);
 
   useEffect(() => {
