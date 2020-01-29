@@ -1,34 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`ChoiceBox fetches choices from choicesUrl 1`] = `
+"<div class=\\"form-group\\"><label class=\\"form-label\\">label</label>
+  <div class=\\"mb-3 input-group\\"><select name=\\"name\\" aria-label=\\"label\\" aria-describedby=\\"basic-addon2\\" class=\\"form-control\\">
+      <option value=\\"\\">(All)</option>
+      <option value=\\"1\\">Choice 1</option>
+      <option value=\\"2\\">Choice 2</option>
+    </select><button type=\\"button\\" class=\\"btn btn-danger\\">Remove</button></div>
+</div>"
+`;
+
 exports[`SearchBox renders correctly 1`] = `
-<div
-  className="form-group"
->
-  <label
-    className="form-label"
-  >
-    label
-  </label>
-  <div
-    className="mb-3 input-group"
-  >
-    <input
-      aria-describedby="basic-addon2"
-      aria-label="label"
-      className="form-control"
-      name="name"
-      onChange={[Function]}
-      placeholder="placeholder"
-      value="value"
-    />
-    <button
-      className="btn btn-danger"
-      disabled={false}
-      onClick={[Function]}
-      type="button"
-    >
-      Remove
-    </button>
-  </div>
-</div>
+"<div class=\\"form-group\\"><label class=\\"form-label\\">label</label>
+  <div class=\\"mb-3 input-group\\"><input name=\\"name\\" placeholder=\\"placeholder\\" aria-label=\\"label\\" aria-describedby=\\"basic-addon2\\" class=\\"form-control\\" value=\\"value\\"><button type=\\"button\\" class=\\"btn btn-danger\\">Remove</button></div>
+</div>"
 `;

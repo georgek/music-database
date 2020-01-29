@@ -37,10 +37,14 @@ export function SearchBox(props) {
 export function ChoiceBox(props) {
   const [choices, setChoices] = useState([]);
 
+  async function fetchChoices(url) {
+    const response = await fetch(url);
+    const data = await response.json();
+    setChoices(data.results);
+  }
+
   useEffect(() => {
-    fetch(props.choicesUrl)
-      .then(response => response.json())
-      .then(data => setChoices(data.results));
+    fetchChoices(props.choicesUrl);
   }, [props.choicesUrl]);
 
   return (
