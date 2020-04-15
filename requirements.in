@@ -1,0 +1,6 @@
+Django>=2
+dj-database-url
+djangorestframework
+markdown
+django-filter
+psycopg2
