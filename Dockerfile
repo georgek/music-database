@@ -5,7 +5,7 @@ COPY ./music_database/frontend/src ./music_database/frontend/src
 RUN npm install
 RUN npm run build
 
-FROM python:3.6-slim as python_builder
+FROM python:3.7 as python_builder
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git build-essential pkg-config libpq-dev
 
@@ -20,7 +20,7 @@ COPY music_database ./music_database
 RUN pip install -r requirements.txt
 RUN pip install -e .[psycopg]
 
-FROM python:3.6-slim as python_runner
+FROM python:3.7-slim as python_runner
 ENV PYTHONUNBUFFERED 1
 RUN apt-get update \
         && apt-get install -y --no-install-recommends libpq5 \
